@@ -1,4 +1,9 @@
 # Binaries for programs and plugins
+cmd/lxi/key33220/key33220
+cmd/lxi/pmx/pmx
+cmd/usbtmc/key33220/key33220
+cmd/visa/usbtmc/key33220/key33220
+cmd/prologix/vcp/key33220/key33220
 *.exe
 *.exe~
 *.dll

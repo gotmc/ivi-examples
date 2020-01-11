@@ -6,6 +6,8 @@ github.com/gotmc/libusb v0.0.0-20191204152728-47e189886b84/go.mod h1:fa+kQZl2bW/
 github.com/gotmc/lxi v0.0.0-20180516161445-c11aa5dac569/go.mod h1:wK2gbDWVUKXJ4unQAnlDbra35KgMFwRd39Vjrosw3A0=
 github.com/gotmc/lxi v0.2.0 h1:AINk31UcOc/SH6k+zItxZoliB0liQ9LOJ9tAKGTiqdM=
 github.com/gotmc/lxi v0.2.0/go.mod h1:d/o4QlGfE/LPU43MhP3oClmzS279FAHJgE3vTYT7D9U=
+github.com/gotmc/prologix v0.0.0-20200111144922-5fc75a1caf39 h1:a/8O6D+v5M5EcPn3tuhvNoJEPwSwpnbYKPG5NCG8wKI=
+github.com/gotmc/prologix v0.0.0-20200111144922-5fc75a1caf39/go.mod h1:FnuXfnWabcHPbDvEwO8WJM9aCOgTHPUmES3wDwbQGtQ=
 github.com/gotmc/usbtmc v0.0.0-20180705190535-91334b87f971/go.mod h1:gZKCRkVyooVOMTHFiO6yvAtBwHbkzeNUFEOA1UDxo24=
 github.com/gotmc/usbtmc v0.2.0 h1:poCcGYIE0q4cVnyMfRTjiov3pPFqT6nOB22nsSix/4A=
 github.com/gotmc/usbtmc v0.2.0/go.mod h1:EeeCRUfRBOUpI//UUOREZ5w3u6YWgBdibdyoUsJtmwE=
@@ -13,4 +15,7 @@ github.com/gotmc/visa v0.0.0-20180516160158-02029f1d5b54/go.mod h1:srcZolUATCAXc
 github.com/gotmc/visa v0.2.0 h1:p0vwTj4PPwM2R63EitptEqzdku6lxcLh0jsAnb/oVwk=
 github.com/gotmc/visa v0.2.0/go.mod h1:7EnNTYsIjWusTaJpPjSKhMVCh4INzj0NokV3iMiwgUc=
 github.com/kylelemons/gousb v0.0.0-20170613091925-99e7ca4f0173/go.mod h1:5UsKSFw2EsQiNUwJoMuiSzUnh3sY7teV66+U230sgvk=
+github.com/tarm/serial v0.0.0-20180830185346-98f6abe2eb07 h1:UyzmZLoiDWMRywV4DUYb9Fbt8uiOSooupjTq10vpvnU=
+github.com/tarm/serial v0.0.0-20180830185346-98f6abe2eb07/go.mod h1:kDXzergiv9cbyO7IOYJZWg1U88JhDg3PB6klq9Hg2pA=
 github.com/truveris/gousb v0.0.0-20160420111257-a0cc1ba42182/go.mod h1:gc2Wm/Rg29CItw/rIDIdqyoTbz1cqAkAWgYFNrgWuu0=
+golang.org/x/sys v0.0.0-20200106162015-b016eb3dc98e/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
