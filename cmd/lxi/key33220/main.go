@@ -9,7 +9,7 @@ import (
 	"log"
 
 	"github.com/gotmc/ivi/fgen"
-	"github.com/gotmc/ivi/fgen/agilent/ag33220"
+	"github.com/gotmc/ivi/fgen/keysight/key33220"
 	"github.com/gotmc/lxi"
 )
 
@@ -24,7 +24,7 @@ func main() {
 
 	// Create a new IVI instance of the Agilent 33220 function generator and
 	// reset.
-	fg, err := ag33220.New(dev, true)
+	fg, err := key33220.New(dev, true)
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}

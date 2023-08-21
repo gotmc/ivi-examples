@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/gotmc/ivi/fgen"
-	"github.com/gotmc/ivi/fgen/agilent/ag33220"
+	"github.com/gotmc/ivi/fgen/keysight/key33220"
 	"github.com/gotmc/prologix"
 	"github.com/tarm/serial"
 )
@@ -41,7 +41,7 @@ func main() {
 	log.Printf("Using %s", prologixVer)
 
 	// Create a new IVI instance of the Agilent 33220 function generator
-	fg, err := ag33220.New(gpib, true)
+	fg, err := key33220.New(gpib, true)
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}

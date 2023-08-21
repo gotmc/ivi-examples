@@ -9,7 +9,7 @@ import (
 	"log"
 
 	"github.com/gotmc/ivi/fgen"
-	"github.com/gotmc/ivi/fgen/agilent/ag33220"
+	"github.com/gotmc/ivi/fgen/keysight/key33220"
 	_ "github.com/gotmc/usbtmc/driver/google"
 	"github.com/gotmc/visa"
 	_ "github.com/gotmc/visa/driver/usbtmc"
@@ -22,7 +22,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("VISA resource %s: %s", address, err)
 	}
-	fg, err := ag33220.New(res, true)
+	fg, err := key33220.New(res, true)
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}
@@ -33,7 +33,7 @@ func main() {
 	ch.SetBurstCount(131)
 	ch.SetInternalTriggerPeriod(0.112) // code period = 112 ms
 	ch.SetTriggerSource(fgen.InternalTrigger)
-	ch.SetOperationMode(fgen.Burst)
+	ch.SetOperationMode(fgen.BurstMode)
 	ch.EnableOutput()
 	// Query the FGen
 	wave, err := ch.StandardWaveform()

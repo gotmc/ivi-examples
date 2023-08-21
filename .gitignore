@@ -2,9 +2,11 @@
 cmd/lxi/key33220/key33220
 cmd/lxi/pmx/pmx
 cmd/usbtmc/key33220/key33220
+cmd/usbtmc/keyu2751a/keyu2751a
 cmd/visa/usbtmc/key33220/key33220
 cmd/prologix/vcp/key33220/key33220
 cmd/prologix/vcp/e3631a/e3631a
+cmd/prologix/vcp/fluke45/fluke45
 *.exe
 *.exe~
 *.dll

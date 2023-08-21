@@ -34,7 +34,7 @@ func main() {
 	ch := dcp.Channels[0]
 	ch.DisableOutput()
 	ch.SetVoltageLevel(50)
-	ch.ConfigureCurrentLimit(dcpwr.Trip, 0.25)
+	ch.ConfigureCurrentLimit(dcpwr.CurrentTrip, 0.25)
 	// The above command is the same as the following two:
 	// ch.SetCurrentLimitBehavior(dcpwr.Trip)
 	// ch.SetCurrentLimit(0.25)

@@ -9,7 +9,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/gotmc/ivi/dcpwr/keysight/e36xx"
+	"github.com/gotmc/ivi/dmm/fluke/fluke45"
 	"github.com/gotmc/prologix"
 	"github.com/tarm/serial"
 )
@@ -29,7 +29,7 @@ func main() {
 
 	// Create a new GPIB controller using the aforementioned serial port and
 	// communicating with the instrument at GPIB address 5.
-	gpib, err := prologix.NewController(port, 5, true)
+	gpib, err := prologix.NewController(port, 10, true)
 	if err != nil {
 		log.Fatalf("NewController error: %s", err)
 	}
@@ -41,18 +41,16 @@ func main() {
 
 	// Create a new IVI instance of the HP/Agilent/Keysight E3631A DC power
 	// supply.
-	ps, err := e36xx.New(gpib, true)
+	dmm, err := fluke45.New(gpib, true)
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}
 
-	// Channel specific methods can be accessed directly from the instrument
-	// using 0-based index to select the desirec channel.
-	ch6v := ps.Channels[0]
-	ch6v.DisableOutput()
-	ch6v.SetVoltageLevel(5.0)
-	ch6v.SetCurrentLimit(1.0)
-	ch6v.EnableOutput()
+	fcn, err := dmm.MeasurementFunction()
+	if err != nil {
+		log.Fatalf("error getting measurement function: %s", err)
+	}
+	log.Printf("MeasurementFunction = %s", fcn)
 
 	// Return local control to the front panel.
 	err = gpib.FrontPanel(true)
