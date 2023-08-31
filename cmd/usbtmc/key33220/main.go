@@ -50,7 +50,7 @@ func main() {
 
 	// Instead of configuring attributes of a standard waveform individually, the
 	// standard waveform can be configured using a single method.
-	ch.ConfigureStandardWaveform(fgen.RampUp, 0.4, 0.1, 2340, 0)
+	ch.ConfigureStandardWaveform(fgen.RampUp, 0.4, 0.1, 2360, 0)
 	ch.EnableOutput()
 
 	// Query the fg
@@ -64,6 +64,11 @@ func main() {
 		log.Printf("error querying amplitude: %s", err)
 	}
 	log.Printf("Amplitude = %.3f Vpp", amp)
+	offset, err := ch.DCOffset()
+	if err != nil {
+		log.Printf("error querying DC offset: %s", err)
+	}
+	log.Printf("DC Offset = %.3f V", offset)
 	wave, err := ch.StandardWaveform()
 	if err != nil {
 		log.Printf("error querying standard waveform: %s", err)
