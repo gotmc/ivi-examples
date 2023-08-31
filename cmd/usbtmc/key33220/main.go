@@ -53,42 +53,84 @@ func main() {
 	ch.ConfigureStandardWaveform(fgen.RampUp, 0.4, 0.1, 2360, 0)
 	ch.EnableOutput()
 
-	// Query the fg
+	// Query the frequency.
 	freq, err := ch.Frequency()
 	if err != nil {
 		log.Printf("error querying frequency: %s", err)
 	}
 	log.Printf("Frequency = %.0f Hz", freq)
+
+	// Query the amplitude.
 	amp, err := ch.Amplitude()
 	if err != nil {
 		log.Printf("error querying amplitude: %s", err)
 	}
 	log.Printf("Amplitude = %.3f Vpp", amp)
+
+	// Query the DC offset.
 	offset, err := ch.DCOffset()
 	if err != nil {
 		log.Printf("error querying DC offset: %s", err)
 	}
-	log.Printf("DC Offset = %.3f V", offset)
+	log.Printf("DC Offset = %.1f mV", 1000*offset)
+
+	// Query the standard waveform.
 	wave, err := ch.StandardWaveform()
 	if err != nil {
 		log.Printf("error querying standard waveform: %s", err)
 	}
 	log.Printf("Standard waveform = %s", wave)
+
+	// Query the burst count.
+	bc, err := ch.BurstCount()
+	if err != nil {
+		log.Printf("error querying burst count: %s", err)
+	}
+	log.Printf("Burst count = %d", bc)
+
+	// Query the internal trigger period.
+	itp, err := ch.InternalTriggerPeriod()
+	if err != nil {
+		log.Printf("error querying internal trigger period: %s", err)
+	}
+	log.Printf("Internal trigger period = %.1f ms", 1000*itp)
+
+	// Query the trigger source.
+	ts, err := ch.TriggerSource()
+	if err != nil {
+		log.Printf("error querying trigger source: %s", err)
+	}
+	log.Printf("Trigger source = %s", ts)
+
+	// Query the operation mode.
+	om, err := ch.OperationMode()
+	if err != nil {
+		log.Printf("error querying operation mode: %s", err)
+	}
+	log.Printf("Operation mode = %s", om)
+
+	// Query the instrument manufacturer.
 	mfr, err := fg.InstrumentManufacturer()
 	if err != nil {
 		log.Printf("error querying instrument manufacturer: %s", err)
 	}
 	log.Printf("Instrument manufacturer = %s", mfr)
+
+	// Query the instrument model.
 	model, err := fg.InstrumentModel()
 	if err != nil {
 		log.Printf("error querying instrument model: %s", err)
 	}
 	log.Printf("Instrument model = %s", model)
+
+	// Query the serial number.
 	sn, err := fg.InstrumentSerialNumber()
 	if err != nil {
 		log.Printf("error querying instrument sn: %s", err)
 	}
 	log.Printf("Instrument S/N = %s", sn)
+
+	// Query the firmware revision.
 	fw, err := fg.FirmwareRevision()
 	if err != nil {
 		log.Printf("error querying firmware revision: %s", err)

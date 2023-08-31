@@ -69,7 +69,7 @@ func main() {
 	if err != nil {
 		log.Printf("error querying DC offset: %s", err)
 	}
-	log.Printf("DC Offset = %.3f V", offset)
+	log.Printf("DC Offset = %.1f mV", 1000*offset)
 
 	// Query the standard waveform.
 	wave, err := ch.StandardWaveform()
@@ -90,7 +90,7 @@ func main() {
 	if err != nil {
 		log.Printf("error querying internal trigger period: %s", err)
 	}
-	log.Printf("Internal trigger period = %f", itp)
+	log.Printf("Internal trigger period = %.1f ms", 1000*itp)
 
 	// Query the trigger source.
 	ts, err := ch.TriggerSource()
