@@ -8,29 +8,22 @@ package main
 import (
 	"io"
 	"log"
-	"time"
 
 	"github.com/gotmc/ivi/dcpwr/keysight/e36xx"
 	"github.com/gotmc/prologix"
-	"github.com/tarm/serial"
+	"github.com/gotmc/prologix/driver/vcp"
 )
 
 func main() {
-
-	// Open a serial port.
-	cfg := serial.Config{
-		Name:        "/dev/tty.usbserial-PX8X3YR6",
-		Baud:        115200,
-		ReadTimeout: time.Millisecond * 500,
-	}
-	port, err := serial.OpenPort(&cfg)
+	serialPort := "/dev/tty.usbserial-PX8X3YR6"
+	vcp, err := vcp.NewVCP(serialPort)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Create a new GPIB controller using the aforementioned serial port and
 	// communicating with the instrument at GPIB address 5.
-	gpib, err := prologix.NewController(port, 5, true)
+	gpib, err := prologix.NewController(vcp, 5, true)
 	if err != nil {
 		log.Fatalf("NewController error: %s", err)
 	}
@@ -89,22 +82,27 @@ func main() {
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}
-	log.Print("created new IVI e36xx instrument")
+	log.Print("Created new IVI e36xx instrument")
 
-	model, err := ps.InstrumentModel()
-	if err != nil {
-		log.Fatalf("could not determine instrument model: %s", err)
-	}
-	log.Printf("instrument model = %s", model)
+	// log.Print("Sending IVI command InstrumentModel")
+	// model, err := ps.InstrumentModel()
+	// if err != nil {
+	// 	log.Fatalf("could not determine instrument model: %s", err)
+	// }
+	// log.Printf("Instrument model = %s", model)
 
 	// Channel specific methods can be accessed directly from the instrument
 	// using 0-based index to select the desired channel.
+	log.Printf("Grab first channel, which is the 6V channel.")
 	ch6v := ps.Channels[0]
 	err = ch6v.DisableOutput()
 	if err != nil {
 		log.Print(err)
 	}
-	err = ch6v.SetVoltageLevel(5.0)
+
+	desiredVoltage := 5.0
+	log.Printf("Set the voltage to %.2f V", desiredVoltage)
+	err = ch6v.SetVoltageLevel(desiredVoltage)
 	if err != nil {
 		log.Print(err)
 	}
@@ -131,11 +129,11 @@ func main() {
 	}
 
 	// Discard any unread data on the serial port and then close.
-	err = port.Flush()
+	err = vcp.Flush()
 	if err != nil {
 		log.Printf("error flushing serial port: %s", err)
 	}
-	err = port.Close()
+	err = vcp.Close()
 	if err != nil {
 		log.Printf("error closing serial port: %s", err)
 	}
