@@ -6,6 +6,8 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"log"
 
 	"github.com/gotmc/ivi/fgen"
@@ -15,8 +17,19 @@ import (
 
 func main() {
 
+	// Get IP address from CLI flag.
+	var ip string
+	flag.StringVar(
+		&ip,
+		"ip",
+		"192.168.1.100",
+		"IP address of Keysight 33220A",
+	)
+	flag.Parse()
+
 	// Create a new LXI device
-	dev, err := lxi.NewDevice("TCPIP0::10.12.100.150::5025::SOCKET")
+	address := fmt.Sprintf("TCPIP0::%s::5025::SOCKET", ip)
+	dev, err := lxi.NewDevice(address)
 	if err != nil {
 		log.Fatalf("NewDevice error: %s", err)
 	}
@@ -26,7 +39,7 @@ func main() {
 	// reset.
 	fg, err := key33220.New(dev, true)
 	if err != nil {
-		log.Fatalf("IVI instrument error: %s", err)
+		log.Fatalf("IVI instrument eror: %s", err)
 	}
 
 	// Channel specific methods can be accessed directly from the instrument

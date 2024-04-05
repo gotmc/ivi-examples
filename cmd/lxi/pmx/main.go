@@ -6,6 +6,8 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"log"
 	"time"
 
@@ -16,8 +18,19 @@ import (
 
 func main() {
 
+	// Get IP address from CLI flag.
+	var ip string
+	flag.StringVar(
+		&ip,
+		"ip",
+		"192.168.1.100",
+		"IP address of Kikusui PMX DC power supply",
+	)
+	flag.Parse()
+
 	// Create a new LXI device
-	dev, err := lxi.NewDevice("TCPIP0::10.12.100.154::5025::SOCKET")
+	address := fmt.Sprintf("TCPIP0::%s::5025::SOCKET", ip)
+	dev, err := lxi.NewDevice(address)
 	if err != nil {
 		log.Fatalf("NewDevice error: %s", err)
 	}
