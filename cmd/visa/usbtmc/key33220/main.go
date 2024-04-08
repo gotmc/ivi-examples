@@ -6,6 +6,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 
 	"github.com/gotmc/ivi/fgen"
@@ -15,10 +16,35 @@ import (
 	_ "github.com/gotmc/visa/driver/usbtmc"
 )
 
+var (
+	debugLevel uint
+	address    string
+)
+
+func init() {
+	// Get the debug level from CLI flag.
+	const (
+		defaultLevel = 1
+		debugUsage   = "USB debug level"
+	)
+	flag.UintVar(&debugLevel, "debug", defaultLevel, debugUsage)
+	flag.UintVar(&debugLevel, "d", defaultLevel, debugUsage+" (shorthand)")
+
+	// Get VISA address from CLI flag.
+	flag.StringVar(
+		&address,
+		"visa",
+		"USB0::2391::1031::MY44035849::INSTR",
+		"VISA address of Keysight 33220A",
+	)
+}
+
 func main() {
+	// Parse the flags
+	flag.Parse()
 
 	// Configure a new VISA resource using the USBTMC driver.
-	address := "usb0::2391::1031::MY44035849::INSTR"
+	log.Printf("VISA address = %s", address)
 	res, err := visa.NewResource(address)
 	if err != nil {
 		log.Fatalf("VISA resource %s: %s", address, err)
@@ -49,6 +75,34 @@ func main() {
 
 	// Enable the output.
 	ch.EnableOutput()
+
+	// Query the instrument manufacturer.
+	mfr, err := fg.InstrumentManufacturer()
+	if err != nil {
+		log.Printf("error querying instrument manufacturer: %s", err)
+	}
+	log.Printf("Instrument manufacturer = %s", mfr)
+
+	// Query the instrument model.
+	model, err := fg.InstrumentModel()
+	if err != nil {
+		log.Printf("error querying instrument model: %s", err)
+	}
+	log.Printf("Instrument model = %s", model)
+
+	// Query the serial number.
+	sn, err := fg.InstrumentSerialNumber()
+	if err != nil {
+		log.Printf("error querying instrument sn: %s", err)
+	}
+	log.Printf("Instrument S/N = %s", sn)
+
+	// Query the firmware revision.
+	fw, err := fg.FirmwareRevision()
+	if err != nil {
+		log.Printf("error querying firmware revision: %s", err)
+	}
+	log.Printf("Firmware revision = %s", fw)
 
 	// Query the frequency.
 	freq, err := ch.Frequency()
@@ -105,34 +159,6 @@ func main() {
 		log.Printf("error querying operation mode: %s", err)
 	}
 	log.Printf("Operation mode = %s", om)
-
-	// Query the instrument manufacturer.
-	mfr, err := fg.InstrumentManufacturer()
-	if err != nil {
-		log.Printf("error querying instrument manufacturer: %s", err)
-	}
-	log.Printf("Instrument manufacturer = %s", mfr)
-
-	// Query the instrument model.
-	model, err := fg.InstrumentModel()
-	if err != nil {
-		log.Printf("error querying instrument model: %s", err)
-	}
-	log.Printf("Instrument model = %s", model)
-
-	// Query the serial number.
-	sn, err := fg.InstrumentSerialNumber()
-	if err != nil {
-		log.Printf("error querying instrument sn: %s", err)
-	}
-	log.Printf("Instrument S/N = %s", sn)
-
-	// Query the firmware revision.
-	fw, err := fg.FirmwareRevision()
-	if err != nil {
-		log.Printf("error querying firmware revision: %s", err)
-	}
-	log.Printf("Firmware revision = %s", fw)
 
 	// Close the VISA resource.
 	err = res.Close()

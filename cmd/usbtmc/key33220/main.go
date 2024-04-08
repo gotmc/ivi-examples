@@ -6,6 +6,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 
 	"github.com/gotmc/ivi/fgen"
@@ -14,7 +15,32 @@ import (
 	_ "github.com/gotmc/usbtmc/driver/google"
 )
 
+var (
+	debugLevel uint
+	address    string
+)
+
+func init() {
+	// Get the debug level from CLI flag.
+	const (
+		defaultLevel = 1
+		debugUsage   = "USB debug level"
+	)
+	flag.UintVar(&debugLevel, "debug", defaultLevel, debugUsage)
+	flag.UintVar(&debugLevel, "d", defaultLevel, debugUsage+" (shorthand)")
+
+	// Get VISA address from CLI flag.
+	flag.StringVar(
+		&address,
+		"visa",
+		"USB0::2391::1031::MY44035849::INSTR",
+		"VISA address of Keysight 33220A",
+	)
+}
+
 func main() {
+	// Parse the flags
+	flag.Parse()
 
 	// Create a USBTMC context and set the debug level
 	ctx, err := usbtmc.NewContext()
@@ -22,10 +48,11 @@ func main() {
 		log.Fatalf("Error creating new USB context: %s", err)
 	}
 	defer ctx.Close()
-	ctx.SetDebugLevel(1)
+	ctx.SetDebugLevel(int(debugLevel))
 
 	// Create a new USBTMC device
-	dev, err := ctx.NewDevice("USB0::2391::1031::MY44035849::INSTR")
+	log.Printf("VISA address = %s", address)
+	dev, err := ctx.NewDevice(address)
 	if err != nil {
 		log.Fatalf("NewDevice error: %s", err)
 	}
@@ -36,6 +63,10 @@ func main() {
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}
+
+	// From here forward, we can use the IVI API for the function generator
+	// instead of having to send SCPI or other commands that are specific to this
+	// model function generator.
 
 	// Channel specific methods can be accessed directly from the instrument
 	// using 0-based index to select the desirec channel.
@@ -50,8 +81,36 @@ func main() {
 
 	// Instead of configuring attributes of a standard waveform individually, the
 	// standard waveform can be configured using a single method.
-	ch.ConfigureStandardWaveform(fgen.RampUp, 0.4, 0.1, 2360, 0)
+	ch.ConfigureStandardWaveform(fgen.Sine, 0.4, 0.1, 2360, 0)
 	ch.EnableOutput()
+
+	// Query the instrument manufacturer.
+	mfr, err := fg.InstrumentManufacturer()
+	if err != nil {
+		log.Printf("error querying instrument manufacturer: %s", err)
+	}
+	log.Printf("Instrument manufacturer = %s", mfr)
+
+	// Query the instrument model.
+	model, err := fg.InstrumentModel()
+	if err != nil {
+		log.Printf("error querying instrument model: %s", err)
+	}
+	log.Printf("Instrument model = %s", model)
+
+	// Query the serial number.
+	sn, err := fg.InstrumentSerialNumber()
+	if err != nil {
+		log.Printf("error querying instrument sn: %s", err)
+	}
+	log.Printf("Instrument S/N = %s", sn)
+
+	// Query the firmware revision.
+	fw, err := fg.FirmwareRevision()
+	if err != nil {
+		log.Printf("error querying firmware revision: %s", err)
+	}
+	log.Printf("Firmware revision = %s", fw)
 
 	// Query the frequency.
 	freq, err := ch.Frequency()
@@ -108,32 +167,4 @@ func main() {
 		log.Printf("error querying operation mode: %s", err)
 	}
 	log.Printf("Operation mode = %s", om)
-
-	// Query the instrument manufacturer.
-	mfr, err := fg.InstrumentManufacturer()
-	if err != nil {
-		log.Printf("error querying instrument manufacturer: %s", err)
-	}
-	log.Printf("Instrument manufacturer = %s", mfr)
-
-	// Query the instrument model.
-	model, err := fg.InstrumentModel()
-	if err != nil {
-		log.Printf("error querying instrument model: %s", err)
-	}
-	log.Printf("Instrument model = %s", model)
-
-	// Query the serial number.
-	sn, err := fg.InstrumentSerialNumber()
-	if err != nil {
-		log.Printf("error querying instrument sn: %s", err)
-	}
-	log.Printf("Instrument S/N = %s", sn)
-
-	// Query the firmware revision.
-	fw, err := fg.FirmwareRevision()
-	if err != nil {
-		log.Printf("error querying firmware revision: %s", err)
-	}
-	log.Printf("Firmware revision = %s", fw)
 }
