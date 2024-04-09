@@ -15,7 +15,7 @@ require (
 	github.com/google/gousb v1.1.3 // indirect
 	github.com/gotmc/convert v0.2.0 // indirect
 	github.com/gotmc/query v0.4.1 // indirect
-	go.bug.st/serial v1.6.0 // indirect
+	go.bug.st/serial v1.6.2 // indirect
 	golang.org/x/sys v0.0.0-20220829200755-d48e67d00261 // indirect
 )
 
