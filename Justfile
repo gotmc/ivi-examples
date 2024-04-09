@@ -43,10 +43,18 @@ ex2:
   env go build -o key33220
   ./key33220 -visa="USB0::2391::1031::MY44035849::INSTR"
 
-# Build and run the VISA USBTMC Keysight/Agilent 33220A example application.
+# Run the VISA USBTMC Keysight 33220A function generator example application.
 ex3:
   #!/usr/bin/env bash
   echo '# VISA USBTMC Keysight 33220A Example Application'
   cd {{justfile_directory()}}/cmd/visa/usbtmc/key33220
   env go build -o key33220
   ./key33220 -visa="USB0::2391::1031::MY44035849::INSTR"
+
+# Run the Prologix VCP GPIB Keysight E3631A power supply example application.
+ex4:
+  #!/usr/bin/env bash
+  echo '# Prologix VCP GPIB Keysight E3631A Example Application'
+  cd {{justfile_directory()}}/cmd/prologix/vcp/e3631a
+  env go build -o e3631a
+  ./e3631a -port="/dev/tty.usbserial-PX8X3YR6"
