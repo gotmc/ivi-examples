@@ -28,7 +28,7 @@ outdated:
   go list -u -m all
 
 # Build and run the LXI Keysight/Agilent 33220A example application.
-ex1 ip:
+k33220lxi ip:
   #!/usr/bin/env bash
   echo '# IVI LXI Keysight 33220A Example Application'
   cd {{justfile_directory()}}/cmd/lxi/key33220
@@ -36,7 +36,7 @@ ex1 ip:
   ./key33220 -ip={{ip}}
 
 # Build and run the USBTMC Keysight/Agilent 33220A example application.
-ex2:
+k33220usb:
   #!/usr/bin/env bash
   echo '# IVI USBTMC Keysight 33220A Example Application'
   cd {{justfile_directory()}}/cmd/usbtmc/key33220
@@ -44,15 +44,23 @@ ex2:
   ./key33220 -visa="USB0::2391::1031::MY44035849::INSTR"
 
 # Run the VISA USBTMC Keysight 33220A function generator example application.
-ex3:
+k33220visa:
   #!/usr/bin/env bash
   echo '# IVI VISA USBTMC Keysight 33220A Example Application'
   cd {{justfile_directory()}}/cmd/visa/usbtmc/key33220
   env go build -o key33220
   ./key33220 -visa="USB0::2391::1031::MY44035849::INSTR"
 
+# Run the Prologix VCP GPIB Keysight 33220A function generator example app
+k33220gpib port:
+  #!/usr/bin/env bash
+  echo '# IVI Prologix VCP GPIB Keysight 33220A Example Application'
+  cd {{justfile_directory()}}/cmd/prologix/vcp/key33220
+  env go build -o key33220
+  ./key33220 -port={{port}}
+
 # Run the Prologix VCP GPIB Keysight E3631A power supply example application.
-ex4 port:
+k3631gpib port:
   #!/usr/bin/env bash
   echo '# IVI Prologix VCP GPIB Keysight E3631A Example Application'
   cd {{justfile_directory()}}/cmd/prologix/vcp/e3631a
@@ -60,7 +68,7 @@ ex4 port:
   ./e3631a -port={{port}}
 
 # Run the ASRL Keysight E3631A power supply example application.
-ex5 port:
+k3631asrl port:
   #!/usr/bin/env bash
   echo '# IVI ASRL Keysight E3631A Example Application'
   cd {{justfile_directory()}}/cmd/asrl/e3631a
