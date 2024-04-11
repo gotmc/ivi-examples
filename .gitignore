@@ -7,6 +7,7 @@ cmd/visa/usbtmc/key33220/key33220
 cmd/prologix/vcp/key33220/key33220
 cmd/prologix/vcp/e3631a/e3631a
 cmd/prologix/vcp/fluke45/fluke45
+cmd/asrl/e3631a/e3631a
 *.exe
 *.exe~
 *.dll
