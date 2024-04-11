@@ -40,6 +40,8 @@ func init() {
 }
 
 func main() {
+	log.Println("IVI USBTMC Keysight 33220A Example Application")
+
 	// Parse the flags
 	flag.Parse()
 
@@ -50,7 +52,8 @@ func main() {
 		log.Fatalf("VISA resource %s: %s", address, err)
 	}
 
-	// Setup the IVI driver for the Keysight 33220A function generator.
+	// Create a new IVI instance of and reset the Agilent 33220 function
+	// generator using the USBTMC device.
 	fg, err := key33220.New(res, true)
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
@@ -59,22 +62,6 @@ func main() {
 	// From here forward, we can use the IVI API for the function generator
 	// instead of having to send SCPI or other commands that are specific to this
 	// model function generator.
-
-	// Grab the output channel and disable the output.
-	ch := fg.Channels[0]
-	ch.DisableOutput()
-
-	// Shortcut to configure standard waveform in one command.
-	ch.ConfigureStandardWaveform(fgen.Sine, 0.25, 0.07, 2340, 0)
-
-	// Setup a bursted sinusoidal waveform.
-	ch.SetBurstCount(131)
-	ch.SetInternalTriggerPeriod(0.112) // code period = 112 ms
-	ch.SetTriggerSource(fgen.InternalTrigger)
-	ch.SetOperationMode(fgen.BurstMode)
-
-	// Enable the output.
-	ch.EnableOutput()
 
 	// Query the instrument manufacturer.
 	mfr, err := fg.InstrumentManufacturer()
@@ -90,7 +77,7 @@ func main() {
 	}
 	log.Printf("Instrument model = %s", model)
 
-	// Query the serial number.
+	// Query the instrument's serial number.
 	sn, err := fg.InstrumentSerialNumber()
 	if err != nil {
 		log.Printf("error querying instrument sn: %s", err)
@@ -103,6 +90,53 @@ func main() {
 		log.Printf("error querying firmware revision: %s", err)
 	}
 	log.Printf("Firmware revision = %s", fw)
+
+	// Channel specific methods can be accessed directly from the instrument
+	// using 0-based index to select the desirec channel.
+	if err = fg.Channels[0].DisableOutput(); err != nil {
+		log.Fatalf("error disabling output on ch0: %s", err)
+	}
+	if err = fg.Channels[0].SetAmplitude(2.1); err != nil {
+		log.Fatalf("error setting the amplitude on ch0: %s", err)
+	}
+
+	// Alternatively, the channel can be assigned to a variable.
+	ch := fg.Channels[0]
+	if err = ch.SetStandardWaveform(fgen.Sine); err != nil {
+		log.Fatalf("error setting the standard waveform: %s", err)
+	}
+	if err = ch.SetDCOffset(0.3); err != nil {
+		log.Fatalf("error setting DC offest: %s", err)
+	}
+	if err = ch.SetFrequency(2230); err != nil {
+		log.Fatalf("error setting frequency: %s", err)
+	}
+
+	// Instead of configuring attributes of a standard waveform individually, the
+	// standard waveform can be configured using a single method.
+	if err = ch.ConfigureStandardWaveform(fgen.Sine, 0.25, 0.07, 2340, 0); err != nil {
+		log.Fatalf("error configuring standard waveform: %s", err)
+	}
+
+	// Setup a bursted sinusoidal waveform.
+	if err = ch.SetBurstCount(131); err != nil {
+		log.Fatalf("error setting burst count: %s", err)
+	}
+	// Set the code period to 112 ms.
+	if err = ch.SetInternalTriggerPeriod(0.112); err != nil {
+		log.Fatalf("error setting the internal trigger period: %s", err)
+	}
+	if err = ch.SetTriggerSource(fgen.InternalTrigger); err != nil {
+		log.Fatalf("error setting the trigger source: %s", err)
+	}
+	if err = ch.SetOperationMode(fgen.BurstMode); err != nil {
+		log.Fatalf("error setting the operation mode to burst: %s", err)
+	}
+
+	// Enable the output.
+	if err = ch.EnableOutput(); err != nil {
+		log.Fatalf("error enabling the output: %s", err)
+	}
 
 	// Query the frequency.
 	freq, err := ch.Frequency()

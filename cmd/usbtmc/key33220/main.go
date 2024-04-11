@@ -39,6 +39,8 @@ func init() {
 }
 
 func main() {
+	log.Println("IVI USBTMC Keysight 33220A Example Application")
+
 	// Parse the flags
 	flag.Parse()
 
@@ -47,10 +49,12 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error creating new USB context: %s", err)
 	}
-	defer ctx.Close()
 	ctx.SetDebugLevel(int(debugLevel))
 
-	// Create a new USBTMC device
+	// Close the USBMTC context when finished.
+	defer ctx.Close()
+
+	// Create a new USBTMC device and then close when finished.
 	log.Printf("VISA address = %s", address)
 	dev, err := ctx.NewDevice(address)
 	if err != nil {
@@ -58,7 +62,8 @@ func main() {
 	}
 	defer dev.Close()
 
-	// Create a new IVI instance of the Agilent 33220 function generator
+	// Create a new IVI instance of and reset the Agilent 33220 function
+	// generator using the USBTMC device.
 	fg, err := key33220.New(dev, true)
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
@@ -67,22 +72,6 @@ func main() {
 	// From here forward, we can use the IVI API for the function generator
 	// instead of having to send SCPI or other commands that are specific to this
 	// model function generator.
-
-	// Channel specific methods can be accessed directly from the instrument
-	// using 0-based index to select the desirec channel.
-	fg.Channels[0].DisableOutput()
-	fg.Channels[0].SetAmplitude(0.4)
-
-	// Alternatively, the channel can be assigned to a variable.
-	ch := fg.Channels[0]
-	ch.SetStandardWaveform(fgen.Sine)
-	ch.SetDCOffset(0.1)
-	ch.SetFrequency(2340)
-
-	// Instead of configuring attributes of a standard waveform individually, the
-	// standard waveform can be configured using a single method.
-	ch.ConfigureStandardWaveform(fgen.Sine, 0.4, 0.1, 2360, 0)
-	ch.EnableOutput()
 
 	// Query the instrument manufacturer.
 	mfr, err := fg.InstrumentManufacturer()
@@ -98,7 +87,7 @@ func main() {
 	}
 	log.Printf("Instrument model = %s", model)
 
-	// Query the serial number.
+	// Query the instrument's serial number.
 	sn, err := fg.InstrumentSerialNumber()
 	if err != nil {
 		log.Printf("error querying instrument sn: %s", err)
@@ -111,6 +100,36 @@ func main() {
 		log.Printf("error querying firmware revision: %s", err)
 	}
 	log.Printf("Firmware revision = %s", fw)
+
+	// Channel specific methods can be accessed directly from the instrument
+	// using 0-based index to select the desirec channel.
+	if err = fg.Channels[0].DisableOutput(); err != nil {
+		log.Fatalf("error disabling output on ch0: %s", err)
+	}
+	if err = fg.Channels[0].SetAmplitude(2.1); err != nil {
+		log.Fatalf("error setting the amplitude on ch0: %s", err)
+	}
+
+	// Alternatively, the channel can be assigned to a variable.
+	ch := fg.Channels[0]
+	if err = ch.SetStandardWaveform(fgen.Sine); err != nil {
+		log.Fatalf("error setting the standard waveform: %s", err)
+	}
+	if err = ch.SetDCOffset(0.3); err != nil {
+		log.Fatalf("error setting DC offest: %s", err)
+	}
+	if err = ch.SetFrequency(2230); err != nil {
+		log.Fatalf("error setting frequency: %s", err)
+	}
+
+	// Instead of configuring attributes of a standard waveform individually, the
+	// standard waveform can be configured using a single method.
+	if err = ch.ConfigureStandardWaveform(fgen.Sine, 0.4, 0.1, 2360, 0); err != nil {
+		log.Fatalf("error configuring standard waveform: %s", err)
+	}
+	if err = ch.EnableOutput(); err != nil {
+		log.Fatalf("error enabling output: %s", err)
+	}
 
 	// Query the frequency.
 	freq, err := ch.Frequency()
