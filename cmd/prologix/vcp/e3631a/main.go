@@ -16,19 +16,10 @@ import (
 )
 
 var (
-	debugLevel uint
 	serialPort string
 )
 
 func init() {
-	// Get the debug level from CLI flag.
-	const (
-		defaultLevel = 1
-		debugUsage   = "USB debug level"
-	)
-	flag.UintVar(&debugLevel, "debug", defaultLevel, debugUsage)
-	flag.UintVar(&debugLevel, "d", defaultLevel, debugUsage+" (shorthand)")
-
 	// Get Virtual COM Port (VCP) serial port for Prologix.
 	flag.StringVar(
 		&serialPort,
@@ -39,6 +30,7 @@ func init() {
 }
 
 func main() {
+	log.Println("IVI Prologix VCP GPIB Keysight E3631A Example Application")
 	// Parse the flags
 	flag.Parse()
 
@@ -128,17 +120,17 @@ func main() {
 	}
 
 	desiredVoltage := 5.0
-	log.Printf("Set the voltage to %.2f V", desiredVoltage)
 	err = ch6v.SetVoltageLevel(desiredVoltage)
-	if err != nil {
+	if err != nil && err != io.EOF {
 		log.Print(err)
 	}
 
+	log.Println("Query the voltage level on channel")
 	v, err := ch6v.VoltageLevel()
-	if err != nil {
+	if err != nil && err != io.EOF {
 		log.Printf("error reading voltage level: %s", err)
 	}
-	log.Printf("Voltage = %f", v)
+	log.Printf("Output voltage on 6V channel = %.3f Vdc", v)
 
 	err = ch6v.SetCurrentLimit(1.0)
 	if err != nil {
