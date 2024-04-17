@@ -27,7 +27,7 @@ cover:
 outdated:
   go list -u -m all
 
-# Build and run the LXI Keysight/Agilent 33220A example application.
+# Run the LXI Keysight 33220A fcn gen example.
 k33220lxi ip:
   #!/usr/bin/env bash
   echo '# IVI LXI Keysight 33220A Example Application'
@@ -35,7 +35,7 @@ k33220lxi ip:
   env go build -o key33220
   ./key33220 -ip={{ip}}
 
-# Build and run the USBTMC Keysight/Agilent 33220A example application.
+# Run the USBTMC Keysight 33220A fcn gen example.
 k33220usb:
   #!/usr/bin/env bash
   echo '# IVI USBTMC Keysight 33220A Example Application'
@@ -43,7 +43,7 @@ k33220usb:
   env go build -o key33220
   ./key33220 -visa="USB0::2391::1031::MY44035849::INSTR"
 
-# Run the VISA USBTMC Keysight 33220A function generator example application.
+# Run the VISA USBTMC Keysight 33220A fcn gen example.
 k33220visa:
   #!/usr/bin/env bash
   echo '# IVI VISA USBTMC Keysight 33220A Example Application'
@@ -51,7 +51,7 @@ k33220visa:
   env go build -o key33220
   ./key33220 -visa="USB0::2391::1031::MY44035849::INSTR"
 
-# Run the Prologix VCP GPIB Keysight 33220A function generator example app
+# Run the Prologix VCP GPIB Keysight 33220A fcn gen example.
 k33220gpib port:
   #!/usr/bin/env bash
   echo '# IVI Prologix VCP GPIB Keysight 33220A Example Application'
@@ -59,7 +59,15 @@ k33220gpib port:
   env go build -o key33220
   ./key33220 -port={{port}}
 
-# Run the Prologix VCP GPIB Keysight E3631A power supply example application.
+# Run the LXI Keysight 34461A DMM example.
+k34461lxi ip:
+  #!/usr/bin/env bash
+  echo '# IVI LXI Keysight 34461A Example Application'
+  cd {{justfile_directory()}}/cmd/lxi/key34461a
+  env go build -o key34461a
+  ./key34461a -ip={{ip}}
+
+# Run the Prologix VCP GPIB Keysight E3631A pwr supply example.
 k3631gpib port:
   #!/usr/bin/env bash
   echo '# IVI Prologix VCP GPIB Keysight E3631A Example Application'
@@ -67,7 +75,7 @@ k3631gpib port:
   env go build -o e3631a
   ./e3631a -port={{port}}
 
-# Run the ASRL Keysight E3631A power supply example application.
+# Run the ASRL Keysight E3631A pwr supply example.
 k3631asrl port:
   #!/usr/bin/env bash
   echo '# IVI ASRL Keysight E3631A Example Application'
