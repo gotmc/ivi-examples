@@ -27,6 +27,14 @@ cover:
 outdated:
   go list -u -m all
 
+# Run the ASRL SRS DS345 function generator example.
+ds345 port:
+  #!/usr/bin/env bash
+  echo '# IVI ASRL SRS DS345 Example Application'
+  cd {{justfile_directory()}}/cmd/asrl/ds345
+  env go build -o ds345
+  ./ds345 -port={{port}}
+
 # Run the LXI Keysight 33220A fcn gen example.
 k33220lxi ip:
   #!/usr/bin/env bash

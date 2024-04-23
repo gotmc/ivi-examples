@@ -96,7 +96,7 @@ func main() {
 	if err = fg.Channels[0].DisableOutput(); err != nil {
 		log.Fatalf("error disabling output on ch0: %s", err)
 	}
-	if err = fg.Channels[0].SetAmplitude(0.4); err != nil {
+	if err = fg.Channels[0].SetAmplitude(0.5); err != nil {
 		log.Fatalf("error setting the amplitude on ch0: %s", err)
 	}
 
@@ -105,16 +105,16 @@ func main() {
 	if err = ch.SetStandardWaveform(fgen.Sine); err != nil {
 		log.Fatalf("error setting the standard waveform: %s", err)
 	}
-	if err = ch.SetDCOffset(0.3); err != nil {
+	if err = ch.SetDCOffset(0.2); err != nil {
 		log.Fatalf("error setting DC offest: %s", err)
 	}
-	if err = ch.SetFrequency(2840); err != nil {
+	if err = ch.SetFrequency(2350); err != nil {
 		log.Fatalf("error setting frequency: %s", err)
 	}
 
 	// Instead of configuring attributes of a standard waveform individually, the
 	// standard waveform can be configured using a single method.
-	if err = ch.ConfigureStandardWaveform(fgen.Square, 0.7, 0.2, 2710, 0); err != nil {
+	if err = ch.ConfigureStandardWaveform(fgen.Sine, 0.5, 0.0, 100, 0); err != nil {
 		log.Fatalf("error configuring standard waveform: %s", err)
 	}
 	if err = ch.EnableOutput(); err != nil {
@@ -162,12 +162,12 @@ func main() {
 	}
 	log.Printf("Burst count = %d", bc)
 
-	// Query the internal trigger period.
-	itp, err := ch.InternalTriggerPeriod()
+	// Query the internal trigger rate.
+	itr, err := fg.InternalTriggerRate()
 	if err != nil {
-		log.Printf("error querying internal trigger period: %s", err)
+		log.Printf("error querying internal trigger rate: %s", err)
 	}
-	log.Printf("Internal trigger period = %.1f ms", 1000*itp)
+	log.Printf("Internal trigger rate = %.1f Hz", itr)
 
 	// Query the trigger source.
 	ts, err := ch.TriggerSource()

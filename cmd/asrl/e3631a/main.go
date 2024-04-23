@@ -16,25 +16,23 @@ import (
 )
 
 var (
-	debugLevel uint
 	serialPort string
+	baudRate   int
 )
 
 func init() {
-	// Get the debug level from CLI flag.
-	const (
-		defaultLevel = 1
-		debugUsage   = "USB debug level"
-	)
-	flag.UintVar(&debugLevel, "debug", defaultLevel, debugUsage)
-	flag.UintVar(&debugLevel, "d", defaultLevel, debugUsage+" (shorthand)")
-
 	// Get serial port used to talk with Keysight E3631A.
 	flag.StringVar(
 		&serialPort,
 		"port",
 		"/dev/tty.usbserial-AH03IINA",
 		"Serial port for Keysight E3631A",
+	)
+	flag.IntVar(
+		&baudRate,
+		"baud",
+		9600,
+		"Serial port baud rate for Keysight E3631A",
 	)
 }
 
@@ -43,13 +41,15 @@ func main() {
 	flag.Parse()
 
 	// Open the serial port.
-	address := fmt.Sprintf("ASRL::%s::9600::8N2::INSTR", serialPort)
+	address := fmt.Sprintf("ASRL::%s::%d::8N2::INSTR", serialPort, baudRate)
 	log.Printf("VISA Address = %s", address)
 	dev, err := asrl.NewDevice(address)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer dev.Close()
+
+	dev.HWHandshaking = true
 
 	// Create a new IVI instance of the HP/Agilent/Keysight E3631A DC power
 	// supply.

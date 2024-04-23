@@ -7,54 +7,52 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 
+	"github.com/gotmc/asrl"
+	"github.com/gotmc/ivi"
 	"github.com/gotmc/ivi/fgen"
-	"github.com/gotmc/ivi/fgen/keysight/key33220"
-	_ "github.com/gotmc/usbtmc/driver/google"
-	"github.com/gotmc/visa"
-	_ "github.com/gotmc/visa/driver/usbtmc"
+	"github.com/gotmc/ivi/fgen/srs/ds345"
 )
 
 var (
-	debugLevel uint
-	address    string
+	serialPort string
+	baudRate   int
 )
 
 func init() {
-	// Get the debug level from CLI flag.
-	const (
-		defaultLevel = 1
-		debugUsage   = "USB debug level"
-	)
-	flag.UintVar(&debugLevel, "debug", defaultLevel, debugUsage)
-	flag.UintVar(&debugLevel, "d", defaultLevel, debugUsage+" (shorthand)")
-
-	// Get VISA address from CLI flag.
+	// Get serial port used to talk with Keysight E3631A.
 	flag.StringVar(
-		&address,
-		"visa",
-		"USB0::2391::1031::MY44035849::INSTR",
-		"VISA address of Keysight 33220A",
+		&serialPort,
+		"port",
+		"/dev/tty.usbserial-AH03IINA",
+		"Serial port for Keysight E3631A",
+	)
+	flag.IntVar(
+		&baudRate,
+		"baud",
+		9600,
+		"Serial port baud rate for Keysight E3631A",
 	)
 }
 
 func main() {
-	log.Println("IVI USBTMC Keysight 33220A Example Application")
-
 	// Parse the flags
 	flag.Parse()
 
-	// Configure a new VISA resource using the USBTMC driver.
-	log.Printf("VISA address = %s", address)
-	res, err := visa.NewResource(address)
+	// Open the serial port.
+	address := fmt.Sprintf("ASRL::%s::%d::8N2::INSTR", serialPort, baudRate)
+	log.Printf("VISA Address = %s", address)
+	dev, err := asrl.NewDevice(address)
 	if err != nil {
-		log.Fatalf("VISA resource %s: %s", address, err)
+		log.Fatal(err)
 	}
+	defer dev.Close()
 
-	// Create a new IVI instance of and reset the Agilent 33220 function
-	// generator using the USBTMC device.
-	fg, err := key33220.New(res, true)
+	// Create a new IVI instance of and reset the SRS DS345 function
+	// generator using the serial port.
+	fg, err := ds345.New(dev, true)
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}
@@ -92,11 +90,11 @@ func main() {
 	log.Printf("Firmware revision = %s", fw)
 
 	// Channel specific methods can be accessed directly from the instrument
-	// using 0-based index to select the desirec channel.
-	if err = fg.Channels[0].DisableOutput(); err != nil {
+	// using 0-based index to select the desired channel.
+	if err = fg.Channels[0].DisableOutput(); err != nil && err != ivi.ErrFunctionNotSupported {
 		log.Fatalf("error disabling output on ch0: %s", err)
 	}
-	if err = fg.Channels[0].SetAmplitude(2.1); err != nil {
+	if err = fg.Channels[0].SetAmplitude(0.5); err != nil {
 		log.Fatalf("error setting the amplitude on ch0: %s", err)
 	}
 
@@ -105,38 +103,41 @@ func main() {
 	if err = ch.SetStandardWaveform(fgen.Sine); err != nil {
 		log.Fatalf("error setting the standard waveform: %s", err)
 	}
-	if err = ch.SetDCOffset(0.3); err != nil {
+	if err = ch.SetDCOffset(0.2); err != nil {
 		log.Fatalf("error setting DC offest: %s", err)
 	}
-	if err = ch.SetFrequency(2230); err != nil {
+	if err = ch.SetFrequency(2350); err != nil {
 		log.Fatalf("error setting frequency: %s", err)
 	}
 
 	// Instead of configuring attributes of a standard waveform individually, the
 	// standard waveform can be configured using a single method.
-	if err = ch.ConfigureStandardWaveform(fgen.Sine, 0.25, 0.07, 2340, 0); err != nil {
+	if err = ch.ConfigureStandardWaveform(fgen.Sine, 0.5, 0.1, 100, 0); err != nil {
 		log.Fatalf("error configuring standard waveform: %s", err)
 	}
+	if err = ch.EnableOutput(); err != nil && err != ivi.ErrFunctionNotSupported {
+		log.Fatalf("error enabling output: %s", err)
+	}
 
-	// Setup a bursted sinusoidal waveform.
-	if err = ch.SetBurstCount(131); err != nil {
+	if err = ch.SetBurstCount(40); err != nil {
 		log.Fatalf("error setting burst count: %s", err)
 	}
-	// Set the code period to 112 ms.
-	if err = fg.SetInternalTriggerRate(1 / 0.112); err != nil {
-		log.Fatalf("error setting the internal trigger rate: %s", err)
-	}
 	if err = ch.SetTriggerSource(fgen.OldTriggerSourceInternal); err != nil {
-		log.Fatalf("error setting the trigger source: %s", err)
+		log.Fatalf("error setting internal trigger source: %s", err)
+	}
+	if err = fg.SetInternalTriggerRate(1 / 0.6); err != nil {
+		log.Fatalf("error setting internal trigger rate: %s", err)
 	}
 	if err = ch.SetOperationMode(fgen.BurstMode); err != nil {
-		log.Fatalf("error setting the operation mode to burst: %s", err)
+		log.Fatalf("error setting operation mode to burst: %s", err)
 	}
 
-	// Enable the output.
-	if err = ch.EnableOutput(); err != nil {
-		log.Fatalf("error enabling the output: %s", err)
+	// Query the waveform.
+	wave, err := ch.StandardWaveform()
+	if err != nil {
+		log.Printf("error querying standard waveform: %s", err)
 	}
+	log.Printf("Standard waveform = %s", wave)
 
 	// Query the frequency.
 	freq, err := ch.Frequency()
@@ -152,19 +153,12 @@ func main() {
 	}
 	log.Printf("Amplitude = %.3f Vpp", amp)
 
-	// Query the DC offset voltage.
+	// Query the DC offset.
 	offset, err := ch.DCOffset()
 	if err != nil {
 		log.Printf("error querying DC offset: %s", err)
 	}
 	log.Printf("DC Offset = %.1f mV", 1000*offset)
-
-	// Query the standard waveform.
-	wave, err := ch.StandardWaveform()
-	if err != nil {
-		log.Printf("error querying standard waveform: %s", err)
-	}
-	log.Printf("Standard waveform = %s", wave)
 
 	// Query the burst count.
 	bc, err := ch.BurstCount()
@@ -178,7 +172,7 @@ func main() {
 	if err != nil {
 		log.Printf("error querying internal trigger rate: %s", err)
 	}
-	log.Printf("Internal trigger rate = %.1f Hz", itr)
+	log.Printf("Internal trigger rate = %.3g Hz", itr)
 
 	// Query the trigger source.
 	ts, err := ch.TriggerSource()
@@ -193,10 +187,4 @@ func main() {
 		log.Printf("error querying operation mode: %s", err)
 	}
 	log.Printf("Operation mode = %s", om)
-
-	// Close the VISA resource.
-	err = res.Close()
-	if err != nil {
-		log.Printf("Error closing VISA resource: %s", err)
-	}
 }

@@ -167,11 +167,11 @@ func main() {
 	log.Printf("Burst count = %d", bc)
 
 	// Query the internal trigger period.
-	itp, err := ch.InternalTriggerPeriod()
+	itr, err := fg.InternalTriggerRate()
 	if err != nil {
-		log.Printf("error querying internal trigger period: %s", err)
+		log.Printf("error querying internal trigger rate: %s", err)
 	}
-	log.Printf("Internal trigger period = %.1f ms", 1000*itp)
+	log.Printf("Internal trigger rate = %.1f Hz", itr)
 
 	// Query the trigger source.
 	ts, err := ch.TriggerSource()
