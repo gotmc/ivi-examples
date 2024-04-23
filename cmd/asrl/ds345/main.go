@@ -122,7 +122,7 @@ func main() {
 	if err = ch.SetBurstCount(40); err != nil {
 		log.Fatalf("error setting burst count: %s", err)
 	}
-	if err = ch.SetTriggerSource(fgen.OldTriggerSourceInternal); err != nil {
+	if err = ch.SetStartTriggerSource(fgen.TriggerSourceInternal); err != nil {
 		log.Fatalf("error setting internal trigger source: %s", err)
 	}
 	if err = fg.SetInternalTriggerRate(1 / 0.6); err != nil {
@@ -175,11 +175,11 @@ func main() {
 	log.Printf("Internal trigger rate = %.3g Hz", itr)
 
 	// Query the trigger source.
-	ts, err := ch.TriggerSource()
+	ts, err := ch.StartTriggerSource()
 	if err != nil {
-		log.Printf("error querying trigger source: %s", err)
+		log.Printf("error querying start trigger source: %s", err)
 	}
-	log.Printf("Trigger source = %s", ts)
+	log.Printf("Start trigger source = %v", ts)
 
 	// Query the operation mode.
 	om, err := ch.OperationMode()
