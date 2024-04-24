@@ -130,7 +130,6 @@ func main() {
 
 	// Measure the output voltage.
 	log.Println("Measure the output voltage")
-	time.Sleep(500 * time.Millisecond)
 	vMsr, err := ch6v.MeasureVoltage()
 	if err != nil {
 		log.Fatal(err)
@@ -139,18 +138,15 @@ func main() {
 
 	// Measure the output current.
 	log.Println("Measure the output current")
-	time.Sleep(500 * time.Millisecond)
 	cMsr, err := ch6v.MeasureCurrent()
 	if err != nil {
 		log.Fatal(err)
 	}
 	log.Printf("Measured current = %.3f Adc", cMsr)
 
-	time.Sleep(500 * time.Millisecond)
 	if _, err = dev.Write([]byte("system:local\n")); err != nil {
 		log.Fatalf("error setting to local: %v", err)
 	}
-	time.Sleep(500 * time.Millisecond)
 	dev.Close()
 
 }
