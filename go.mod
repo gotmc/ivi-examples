@@ -21,3 +21,5 @@ require (
 )
 
 replace github.com/gotmc/ivi => ../ivi
+
+replace github.com/gotmc/asrl => ../asrl

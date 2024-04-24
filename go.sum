@@ -4,8 +4,6 @@ github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/google/gousb v1.1.3 h1:xt6M5TDsGSZ+rlomz5Si5Hmd/Fvbmo2YCJHN+yGaK4o=
 github.com/google/gousb v1.1.3/go.mod h1:GGWUkK0gAXDzxhwrzetW592aOmkkqSGcj5KLEgmCVUg=
-github.com/gotmc/asrl v0.6.1 h1:JkqdmNKi4uwAfSQW5n/DV1jvdcSStYE7BNF5sKU1XYk=
-github.com/gotmc/asrl v0.6.1/go.mod h1:8kiiXH+cUvfjawaFt5kCr7YA0kheF4t34XZjYLf8bmY=
 github.com/gotmc/convert v0.4.0 h1:RI7J96V99HsQDGRMVOUdwczd7tDAk4FVttqOuLcBEwE=
 github.com/gotmc/convert v0.4.0/go.mod h1:ClVdnU/ZcOFgUQWXgHexlLqE9/AFEeo5uZDf9kkAtyw=
 github.com/gotmc/lxi v0.5.1 h1:lyrpVdgj75fvXChyqZ3oyrZVfwqINcYrxGsie0uLJvU=

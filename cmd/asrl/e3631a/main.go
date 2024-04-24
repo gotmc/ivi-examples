@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"time"
 
 	"github.com/gotmc/asrl"
 	"github.com/gotmc/ivi/dcpwr/keysight/e36xx"
@@ -47,17 +48,30 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer dev.Close()
 
 	dev.HWHandshaking = true
 
 	// Create a new IVI instance of the HP/Agilent/Keysight E3631A DC power
-	// supply.
-	ps, err := e36xx.New(dev, false)
+	// supply. Reset the E3631A in order to clear any previous errors.
+	ps, err := e36xx.New(dev, true)
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}
 	log.Print("Created new IVI e36xx instrument")
+
+	// Clear and reset the device.
+	if err = ps.Clear(); err != nil {
+		log.Fatalf("error clearing device: %v", err)
+	}
+	if err = ps.Reset(); err != nil {
+		log.Fatalf("error resetting device: %v", err)
+	}
+
+	time.Sleep(500 * time.Millisecond)
+	if err = dev.Command("syst:rem"); err != nil {
+		log.Fatalf("error setting to remote: %v", err)
+	}
+	time.Sleep(500 * time.Millisecond)
 
 	log.Print("Sending IVI command InstrumentModel")
 	model, err := ps.InstrumentModel()
@@ -75,25 +89,68 @@ func main() {
 		log.Print(err)
 	}
 
+	// Set the output voltage
 	desiredVoltage := 5.0
-	log.Printf("Set the voltage to %.2f V", desiredVoltage)
+	log.Printf("Set the voltage to %.2f Vdc", desiredVoltage)
 	err = ch6v.SetVoltageLevel(desiredVoltage)
 	if err != nil && err != io.EOF {
 		log.Print(err)
 	}
 
-	v, err := ch6v.VoltageLevel()
-	if err != nil && err != io.EOF {
-		log.Printf("error reading voltage level: %s", err)
-	}
-	log.Printf("Output Voltage on 6V channel = %.3f Vdc", v)
-
-	err = ch6v.SetCurrentLimit(1.0)
+	// Set the current limit
+	desiredCurrent := 1.0
+	log.Printf("Set the current limit to %.2f Adc", desiredCurrent)
+	err = ch6v.SetCurrentLimit(desiredCurrent)
 	if err != nil {
 		log.Print(err)
 	}
+
+	// Enable the 6V output
+	log.Printf("Enable 6V output")
 	err = ch6v.EnableOutput()
 	if err != nil {
 		log.Print(err)
 	}
+
+	// Query the output voltage setting.
+	log.Printf("Query the set output voltage level")
+	v, err := ch6v.VoltageLevel()
+	if err != nil && err != io.EOF {
+		log.Printf("error reading voltage level: %s", err)
+	}
+	log.Printf("Output voltage on 6V channel = %.3f Vdc", v)
+
+	// Query the current limit.
+	log.Printf("Query current limit")
+	curr, err := ch6v.CurrentLimit()
+	if err != nil {
+		log.Print(err)
+	}
+	log.Printf("Current limit on 6V channel = %.3f Adc", curr)
+
+	// Measure the output voltage.
+	log.Println("Measure the output voltage")
+	time.Sleep(500 * time.Millisecond)
+	vMsr, err := ch6v.MeasureVoltage()
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("Measured voltage = %.3f Vdc", vMsr)
+
+	// Measure the output current.
+	log.Println("Measure the output current")
+	time.Sleep(500 * time.Millisecond)
+	cMsr, err := ch6v.MeasureCurrent()
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("Measured current = %.3f Adc", cMsr)
+
+	time.Sleep(500 * time.Millisecond)
+	if _, err = dev.Write([]byte("system:local\n")); err != nil {
+		log.Fatalf("error setting to local: %v", err)
+	}
+	time.Sleep(500 * time.Millisecond)
+	dev.Close()
+
 }
