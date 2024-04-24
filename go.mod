@@ -3,7 +3,7 @@ module github.com/gotmc/ivi-examples
 go 1.21
 
 require (
-	github.com/gotmc/asrl v0.6.0
+	github.com/gotmc/asrl v0.6.1
 	github.com/gotmc/ivi v0.10.0
 	github.com/gotmc/lxi v0.5.1
 	github.com/gotmc/prologix v0.7.0

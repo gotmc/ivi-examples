@@ -52,7 +52,7 @@ func main() {
 
 	// Create a new IVI instance of and reset the SRS DS345 function
 	// generator using the serial port.
-	fg, err := ds345.New(dev, true)
+	inst, err := ds345.New(dev, true)
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}
@@ -62,28 +62,28 @@ func main() {
 	// model function generator.
 
 	// Query the instrument manufacturer.
-	mfr, err := fg.InstrumentManufacturer()
+	mfr, err := inst.InstrumentManufacturer()
 	if err != nil {
 		log.Printf("error querying instrument manufacturer: %s", err)
 	}
 	log.Printf("Instrument manufacturer = %s", mfr)
 
 	// Query the instrument model.
-	model, err := fg.InstrumentModel()
+	model, err := inst.InstrumentModel()
 	if err != nil {
 		log.Printf("error querying instrument model: %s", err)
 	}
 	log.Printf("Instrument model = %s", model)
 
 	// Query the instrument's serial number.
-	sn, err := fg.InstrumentSerialNumber()
+	sn, err := inst.InstrumentSerialNumber()
 	if err != nil {
 		log.Printf("error querying instrument sn: %s", err)
 	}
 	log.Printf("Instrument S/N = %s", sn)
 
 	// Query the firmware revision.
-	fw, err := fg.FirmwareRevision()
+	fw, err := inst.FirmwareRevision()
 	if err != nil {
 		log.Printf("error querying firmware revision: %s", err)
 	}
@@ -91,15 +91,15 @@ func main() {
 
 	// Channel specific methods can be accessed directly from the instrument
 	// using 0-based index to select the desired channel.
-	if err = fg.Channels[0].DisableOutput(); err != nil && err != ivi.ErrFunctionNotSupported {
+	if err = inst.Channels[0].DisableOutput(); err != nil && err != ivi.ErrFunctionNotSupported {
 		log.Fatalf("error disabling output on ch0: %s", err)
 	}
-	if err = fg.Channels[0].SetAmplitude(0.5); err != nil {
+	if err = inst.Channels[0].SetAmplitude(0.5); err != nil {
 		log.Fatalf("error setting the amplitude on ch0: %s", err)
 	}
 
 	// Alternatively, the channel can be assigned to a variable.
-	ch := fg.Channels[0]
+	ch := inst.Channels[0]
 	if err = ch.SetStandardWaveform(fgen.Sine); err != nil {
 		log.Fatalf("error setting the standard waveform: %s", err)
 	}
@@ -112,20 +112,20 @@ func main() {
 
 	// Instead of configuring attributes of a standard waveform individually, the
 	// standard waveform can be configured using a single method.
-	if err = ch.ConfigureStandardWaveform(fgen.Sine, 0.5, 0.1, 100, 0); err != nil {
+	if err = ch.ConfigureStandardWaveform(fgen.Sine, 0.5, 0.0, 100, 0); err != nil {
 		log.Fatalf("error configuring standard waveform: %s", err)
 	}
 	if err = ch.EnableOutput(); err != nil && err != ivi.ErrFunctionNotSupported {
 		log.Fatalf("error enabling output: %s", err)
 	}
 
-	if err = ch.SetBurstCount(40); err != nil {
+	if err = ch.SetBurstCount(10); err != nil {
 		log.Fatalf("error setting burst count: %s", err)
 	}
 	if err = ch.SetStartTriggerSource(fgen.TriggerSourceInternal); err != nil {
 		log.Fatalf("error setting internal trigger source: %s", err)
 	}
-	if err = fg.SetInternalTriggerRate(1 / 0.6); err != nil {
+	if err = inst.SetInternalTriggerRate(1 / 0.6); err != nil {
 		log.Fatalf("error setting internal trigger rate: %s", err)
 	}
 	if err = ch.SetOperationMode(fgen.BurstMode); err != nil {
@@ -168,7 +168,7 @@ func main() {
 	log.Printf("Burst count = %d", bc)
 
 	// Query the internal trigger rate.
-	itr, err := fg.InternalTriggerRate()
+	itr, err := inst.InternalTriggerRate()
 	if err != nil {
 		log.Printf("error querying internal trigger rate: %s", err)
 	}
