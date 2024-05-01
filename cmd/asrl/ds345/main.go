@@ -111,25 +111,33 @@ func main() {
 	}
 
 	// Instead of configuring attributes of a standard waveform individually, the
-	// standard waveform can be configured using a single method.
+	// standard waveform can be configured using a single method. In this case, a
+	// Sine wave with 0.5 Vpp amplitude, 0.0 Vdc offset, 100.0 Hz, and 0.0 phase
+	// shift is created.
 	if err = ch.ConfigureStandardWaveform(fgen.Sine, 0.5, 0.0, 100, 0); err != nil {
 		log.Fatalf("error configuring standard waveform: %s", err)
 	}
-	if err = ch.EnableOutput(); err != nil && err != ivi.ErrFunctionNotSupported {
-		log.Fatalf("error enabling output: %s", err)
+
+	// Configure a burst waveform using the above 100 Hz sine wave with 400 ms
+	// on-time and 200 ms off-time for a total period of 600 ms.
+	if err = ch.SetOperationMode(fgen.BurstMode); err != nil {
+		log.Fatalf("error setting burst mode: %s", err)
 	}
 
-	if err = ch.SetBurstCount(10); err != nil {
+	if err = ch.SetBurstCount(40); err != nil {
 		log.Fatalf("error setting burst count: %s", err)
 	}
+
 	if err = ch.SetStartTriggerSource(fgen.TriggerSourceInternal); err != nil {
 		log.Fatalf("error setting internal trigger source: %s", err)
 	}
+
 	if err = inst.SetInternalTriggerRate(1 / 0.6); err != nil {
 		log.Fatalf("error setting internal trigger rate: %s", err)
 	}
-	if err = ch.SetOperationMode(fgen.BurstMode); err != nil {
-		log.Fatalf("error setting operation mode to burst: %s", err)
+
+	if err = ch.EnableOutput(); err != nil && err != ivi.ErrFunctionNotSupported {
+		log.Fatalf("error enabling output: %s", err)
 	}
 
 	// Query the waveform.
