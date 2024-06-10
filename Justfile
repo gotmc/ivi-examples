@@ -91,3 +91,11 @@ k3631asrl port:
   env go build -o e3631a
   ./e3631a -port={{port}}
 
+# Run the LXI Keysight InfiniiVision MSO-X 3024A oscilloscope example.
+k3024lxi ip:
+  #!/usr/bin/env bash
+  echo '# IVI LXI Keysight InfiniiVision MSO-X 3024A Example Application'
+  cd {{justfile_directory()}}/cmd/lxi/key3024
+  env go build -o key3024
+  ./key3024 -ip={{ip}}
+
