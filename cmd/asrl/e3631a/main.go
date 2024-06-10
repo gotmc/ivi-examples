@@ -6,10 +6,12 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"io"
 	"log"
+	"os"
 	"time"
 
 	"github.com/gotmc/asrl"
@@ -135,6 +137,13 @@ func main() {
 		log.Fatal(err)
 	}
 	log.Printf("Measured voltage = %.3f Vdc", vMsr)
+
+	// Pause until user presses ENTER.
+	fmt.Print("Press 'Enter' to continue...")
+	_, err = bufio.NewReader(os.Stdin).ReadBytes('\n')
+	if err != nil {
+		log.Printf("Error reading stdin: %s", err)
+	}
 
 	// Measure the output current.
 	log.Println("Measure the output current")
