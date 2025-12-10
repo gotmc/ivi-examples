@@ -21,7 +21,7 @@ func main() {
 	}
 
 	// Create a new GPIB controller using the aforementioned serial port and
-	// communicating with the instrument at GPIB address 5.
+	// communicating with the instrument at GPIB address 10.
 	gpib, err := prologix.NewController(vcp, 10, true)
 	if err != nil {
 		log.Fatalf("NewController error: %s", err)
@@ -32,8 +32,7 @@ func main() {
 	}
 	log.Printf("Using %s", prologixVer)
 
-	// Create a new IVI instance of the HP/Agilent/Keysight E3631A DC power
-	// supply.
+	// Create a new IVI instance of the Fluke multimeter
 	dmm, err := fluke45.New(gpib, true)
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
