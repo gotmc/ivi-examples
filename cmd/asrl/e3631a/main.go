@@ -156,7 +156,7 @@ func main() {
 	}
 	log.Printf("Measured current = %.3f Adc", cMsr)
 
-	if _, err = dev.Write([]byte("system:local\n")); err != nil {
+	if err = dev.Command(ctx, "system:local"); err != nil {
 		log.Fatalf("error setting to local: %v", err)
 	}
 	dev.Close()
