@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2024 The ivi-examples developers. All rights reserved.
+// Copyright (c) 2017-2026 The ivi-examples developers. All rights reserved.
 // Project site: https://github.com/gotmc/ivi-examples
 // Use of this source code is governed by a MIT-style license that
 // can be found in the LICENSE.txt file for the project.
@@ -42,16 +42,16 @@ func main() {
 	// Close the LXI device when done.
 	defer dev.Close()
 
-	// Create a new IVI instance of and reset the Agilent 33220 function
-	// generator using the LXI device.
+	// Create a new IVI instance and reset the Agilent 33220 function generator
+	// using the LXI device.
 	fg, err := key33220.New(dev, true)
 	if err != nil {
 		log.Fatalf("IVI instrument eror: %s", err)
 	}
 
 	// From here forward, we can use the IVI API for the function generator
-	// instead of having to send SCPI or other commands that are specific to this
-	// model function generator.
+	// instead of having to send SCPI or other commands that are specific to
+	// this model function generator.
 
 	// Query the instrument manufacturer.
 	mfr, err := fg.InstrumentManufacturer(ctx)

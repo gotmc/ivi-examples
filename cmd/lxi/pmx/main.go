@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2024 The ivi-examples developers. All rights reserved.
+// Copyright (c) 2017-2026 The ivi-examples developers. All rights reserved.
 // Project site: https://github.com/gotmc/ivi-examples
 // Use of this source code is governed by a MIT-style license that
 // can be found in the LICENSE.txt file for the project.
@@ -55,7 +55,7 @@ func main() {
 	// ch.SetCurrentLimitBehavior(ctx, dcpwr.Trip)
 	// ch.SetCurrentLimit(ctx, 0.25)
 	ch.ConfigureOVP(ctx, true, 60)
-	// The aove command is the same as the following two:
+	// The above command is the same as the following two:
 	// ch.SetOVPEnabled(ctx, true)
 	// ch.SetOVPLimit(ctx, 60)
 	ch.EnableOutput(ctx)
