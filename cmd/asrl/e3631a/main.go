@@ -7,6 +7,7 @@ package main
 
 import (
 	"bufio"
+	"context"
 	"flag"
 	"fmt"
 	"io"
@@ -43,10 +44,12 @@ func main() {
 	// Parse the flags
 	flag.Parse()
 
+	ctx := context.Background()
+
 	// Open the serial port.
 	address := fmt.Sprintf("ASRL::%s::%d::8N2::INSTR", serialPort, baudRate)
 	log.Printf("VISA Address = %s", address)
-	dev, err := asrl.NewDevice(address)
+	dev, err := asrl.NewDevice(ctx, address)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -62,21 +65,21 @@ func main() {
 	log.Print("Created new IVI e36xx instrument")
 
 	// Clear and reset the device.
-	if err = ps.Clear(); err != nil {
+	if err = ps.Clear(ctx); err != nil {
 		log.Fatalf("error clearing device: %v", err)
 	}
-	if err = ps.Reset(); err != nil {
+	if err = ps.Reset(ctx); err != nil {
 		log.Fatalf("error resetting device: %v", err)
 	}
 
 	time.Sleep(500 * time.Millisecond)
-	if err = dev.Command("syst:rem"); err != nil {
+	if err = dev.Command(ctx, "syst:rem"); err != nil {
 		log.Fatalf("error setting to remote: %v", err)
 	}
 	time.Sleep(500 * time.Millisecond)
 
 	log.Print("Sending IVI command InstrumentModel")
-	model, err := ps.InstrumentModel()
+	model, err := ps.InstrumentModel(ctx)
 	if err != nil {
 		log.Fatalf("could not determine instrument model: %s", err)
 	}
@@ -86,7 +89,7 @@ func main() {
 	// using 0-based index to select the desired channel.
 	log.Printf("Grab first channel, which is the 6V channel.")
 	ch6v := ps.Channels[0]
-	err = ch6v.DisableOutput()
+	err = ch6v.DisableOutput(ctx)
 	if err != nil {
 		log.Print(err)
 	}
@@ -94,7 +97,7 @@ func main() {
 	// Set the output voltage
 	desiredVoltage := 5.0
 	log.Printf("Set the voltage to %.2f Vdc", desiredVoltage)
-	err = ch6v.SetVoltageLevel(desiredVoltage)
+	err = ch6v.SetVoltageLevel(ctx, desiredVoltage)
 	if err != nil && err != io.EOF {
 		log.Print(err)
 	}
@@ -102,21 +105,21 @@ func main() {
 	// Set the current limit
 	desiredCurrent := 1.0
 	log.Printf("Set the current limit to %.2f Adc", desiredCurrent)
-	err = ch6v.SetCurrentLimit(desiredCurrent)
+	err = ch6v.SetCurrentLimit(ctx, desiredCurrent)
 	if err != nil {
 		log.Print(err)
 	}
 
 	// Enable the 6V output
 	log.Printf("Enable 6V output")
-	err = ch6v.EnableOutput()
+	err = ch6v.EnableOutput(ctx)
 	if err != nil {
 		log.Print(err)
 	}
 
 	// Query the output voltage setting.
 	log.Printf("Query the set output voltage level")
-	v, err := ch6v.VoltageLevel()
+	v, err := ch6v.VoltageLevel(ctx)
 	if err != nil && err != io.EOF {
 		log.Printf("error reading voltage level: %s", err)
 	}
@@ -124,7 +127,7 @@ func main() {
 
 	// Query the current limit.
 	log.Printf("Query current limit")
-	curr, err := ch6v.CurrentLimit()
+	curr, err := ch6v.CurrentLimit(ctx)
 	if err != nil {
 		log.Print(err)
 	}
@@ -132,7 +135,7 @@ func main() {
 
 	// Measure the output voltage.
 	log.Println("Measure the output voltage")
-	vMsr, err := ch6v.MeasureVoltage()
+	vMsr, err := ch6v.MeasureVoltage(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -147,7 +150,7 @@ func main() {
 
 	// Measure the output current.
 	log.Println("Measure the output current")
-	cMsr, err := ch6v.MeasureCurrent()
+	cMsr, err := ch6v.MeasureCurrent(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}

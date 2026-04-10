@@ -6,6 +6,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 
@@ -16,16 +17,18 @@ import (
 
 func main() {
 
+	ctx := context.Background()
+
 	// Create a USBTMC context and set the debug level
-	ctx, err := usbtmc.NewContext()
+	usbCtx, err := usbtmc.NewContext()
 	if err != nil {
 		log.Fatalf("Error creating new USB context: %s", err)
 	}
-	defer ctx.Close()
-	ctx.SetDebugLevel(1)
+	defer usbCtx.Close()
+	usbCtx.SetDebugLevel(1)
 
 	// Create a new USBTMC device
-	dev, err := ctx.NewDeviceByVIDPID(0x0957, 0x3D18)
+	dev, err := usbCtx.NewDeviceByVIDPID(0x0957, 0x3D18)
 	if err != nil {
 		log.Fatalf("NewDevice error: %s", err)
 	}
@@ -43,7 +46,7 @@ func main() {
 	log.Printf("U2751A has %d channels", numChannels)
 
 	// Determine instrument model.
-	model, err := sw.InstrumentModel()
+	model, err := sw.InstrumentModel(ctx)
 	if err != nil {
 		log.Printf("error querying instrument model: %s", err)
 	}
@@ -51,7 +54,7 @@ func main() {
 
 	// Get a channel by ID and determine the wiremode.
 	idx := 0
-	ch, err := sw.ChannelByID(idx)
+	ch, err := sw.ChannelByID(ctx, idx)
 	if err != nil {
 		log.Fatalf("Could not find channel %d: %s", idx, err)
 	}
@@ -66,34 +69,34 @@ func main() {
 		"Col2": "pin2",
 	}
 
-	err = sw.SetVirtualNames(vn)
+	err = sw.SetVirtualNames(ctx, vn)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Get a row and a column and set the row to a source channel.
-	row1, err := sw.Channel("Row1")
+	row1, err := sw.Channel(ctx, "Row1")
 	if err != nil {
 		log.Fatal(err)
 	}
-	row1.SetSourceChannel(true)
-	col2, err := sw.Channel("Col2")
+	row1.SetSourceChannel(ctx, true)
+	col2, err := sw.Channel(ctx, "Col2")
 	if err != nil {
 		log.Fatal(err)
 	}
-	col2.SetSourceChannel(false)
+	col2.SetSourceChannel(ctx, false)
 	log.Printf("Row1 is source channel: %t", row1.IsSourceChannel())
 	log.Printf("Col2 is source channel: %t", col2.IsSourceChannel())
 
 	// Make a connection
-	err = sw.Connect("Row1", "Col2")
+	err = sw.Connect(ctx, "Row1", "Col2")
 	if err != nil {
 		log.Fatalf("could not connect Row1 and Col2: %s", err)
 	}
 	log.Printf("Connected Row1 (source channel) and Col2 (non-source channel)")
 
 	// Try to make an invalid connection.
-	err = sw.Connect("Col1", "Col2")
+	err = sw.Connect(ctx, "Col1", "Col2")
 	if err != nil {
 		log.Printf("error trying to connect Col1 and Col2: %s", err)
 	}
@@ -102,7 +105,7 @@ func main() {
 	rows := []string{"101:108", "201:208", "301:308", "401:408"}
 	for i, row := range rows {
 		q := fmt.Sprintf("diag:rel:cycl? (@%s)", row)
-		resp, err := dev.Query(q)
+		resp, err := dev.Query(ctx, q)
 		if err != nil {
 			log.Printf("error querying relay cycle counts on row %d: %s", i+1, err)
 		}

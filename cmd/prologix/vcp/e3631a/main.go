@@ -3,9 +3,18 @@
 // Use of this source code is governed by a MIT-style license that
 // can be found in the LICENSE.txt file for the project.
 
+//go:build ignore
+// +build ignore
+
+// NOTE: This example is temporarily excluded from building because the
+// prologix package has not yet been updated with context-aware methods
+// required by the ivi.Instrument interface. Once github.com/gotmc/prologix
+// is updated, remove the "go:build ignore" directive above.
+
 package main
 
 import (
+	"context"
 	"flag"
 	"io"
 	"log"
@@ -34,6 +43,8 @@ func main() {
 	// Parse the flags
 	flag.Parse()
 
+	ctx := context.Background()
+
 	log.Printf("Serial port = %s", serialPort)
 	vcp, err := vcp.NewVCP(serialPort)
 	if err != nil {
@@ -48,11 +59,11 @@ func main() {
 	}
 
 	// Query the GPIB instrument address.
-	addr, err := gpib.InstrumentAddress()
+	addr, secAddr, err := gpib.InstrumentAddress()
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Printf("GPIB instrument address = %d", addr)
+	log.Printf("GPIB instrument address = %d (secondary = %d)", addr, secAddr)
 
 	// Query the Prologix controller version.
 	prologixVer, err := gpib.Version()
@@ -104,7 +115,7 @@ func main() {
 	log.Print("Created new IVI e36xx instrument")
 
 	// log.Print("Sending IVI command InstrumentModel")
-	// model, err := ps.InstrumentModel()
+	// model, err := ps.InstrumentModel(ctx)
 	// if err != nil {
 	// 	log.Fatalf("could not determine instrument model: %s", err)
 	// }
@@ -114,29 +125,29 @@ func main() {
 	// using 0-based index to select the desired channel.
 	log.Printf("Grab first channel, which is the 6V channel.")
 	ch6v := ps.Channels[0]
-	err = ch6v.DisableOutput()
+	err = ch6v.DisableOutput(ctx)
 	if err != nil {
 		log.Print(err)
 	}
 
 	desiredVoltage := 5.0
-	err = ch6v.SetVoltageLevel(desiredVoltage)
+	err = ch6v.SetVoltageLevel(ctx, desiredVoltage)
 	if err != nil && err != io.EOF {
 		log.Print(err)
 	}
 
 	log.Println("Query the voltage level on channel")
-	v, err := ch6v.VoltageLevel()
+	v, err := ch6v.VoltageLevel(ctx)
 	if err != nil && err != io.EOF {
 		log.Printf("error reading voltage level: %s", err)
 	}
 	log.Printf("Output voltage on 6V channel = %.3f Vdc", v)
 
-	err = ch6v.SetCurrentLimit(1.0)
+	err = ch6v.SetCurrentLimit(ctx, 1.0)
 	if err != nil {
 		log.Print(err)
 	}
-	err = ch6v.EnableOutput()
+	err = ch6v.EnableOutput(ctx)
 	if err != nil {
 		log.Print(err)
 	}
