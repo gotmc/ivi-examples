@@ -121,10 +121,13 @@ func main() {
 	// }
 	// log.Printf("Instrument model = %s", model)
 
-	// Channel specific methods can be accessed directly from the instrument
-	// using 0-based index to select the desired channel.
+	// Channel specific methods can be accessed using the Channel method with a
+	// 0-based index to select the desired channel.
 	log.Printf("Grab first channel, which is the 6V channel.")
-	ch6v := ps.Channels[0]
+	ch6v, err := ps.Channel(0)
+	if err != nil {
+		log.Fatalf("error getting channel 0: %s", err)
+	}
 	err = ch6v.DisableOutput(ctx)
 	if err != nil {
 		log.Print(err)

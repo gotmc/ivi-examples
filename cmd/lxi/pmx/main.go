@@ -48,8 +48,11 @@ func main() {
 		log.Fatalf("error resetting instrument: %s", err)
 	}
 
-	// Alternatively, the channel can be assigned to a variable.
-	ch := dcp.Channels[0]
+	// Get the first channel.
+	ch, err := dcp.Channel(0)
+	if err != nil {
+		log.Fatalf("error getting channel 0: %s", err)
+	}
 	if err = ch.DisableOutput(ctx); err != nil {
 		log.Fatalf("error disabling output: %s", err)
 	}

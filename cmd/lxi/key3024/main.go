@@ -85,7 +85,10 @@ func main() {
 	i := scope1.ChannelCount()
 	log.Printf("Channel count = %d", i)
 
-	ch1 := scope1.Channels[0]
+	ch1, err := scope1.Channel(0)
+	if err != nil {
+		log.Fatalf("error getting channel 0: %s", err)
+	}
 	if err = ch1.SetInputImpedance(ctx, 50.0); err != nil {
 		panic(err)
 	}

@@ -104,17 +104,18 @@ func main() {
 	}
 	log.Printf("Firmware revision = %s", fw)
 
-	// Channel specific methods can be accessed directly from the instrument
-	// using 0-based index to select the desirec channel.
-	if err = fg.Channels[0].DisableOutput(ctx); err != nil {
+	// Channel specific methods can be accessed using the Channel method with a
+	// 0-based index to select the desired channel.
+	ch, err := fg.Channel(0)
+	if err != nil {
+		log.Fatalf("error getting channel 0: %s", err)
+	}
+	if err = ch.DisableOutput(ctx); err != nil {
 		log.Fatalf("error disabling output on ch0: %s", err)
 	}
-	if err = fg.Channels[0].SetAmplitude(ctx, 2.1); err != nil {
+	if err = ch.SetAmplitude(ctx, 2.1); err != nil {
 		log.Fatalf("error setting the amplitude on ch0: %s", err)
 	}
-
-	// Alternatively, the channel can be assigned to a variable.
-	ch := fg.Channels[0]
 	if err = ch.SetStandardWaveform(ctx, fgen.Sine); err != nil {
 		log.Fatalf("error setting the standard waveform: %s", err)
 	}
