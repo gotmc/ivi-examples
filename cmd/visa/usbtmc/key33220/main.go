@@ -57,7 +57,7 @@ func main() {
 
 	// Create a new IVI instance of and reset the Agilent 33220 function
 	// generator using the USBTMC device.
-	inst, err := key33220.New(res, true)
+	inst, err := key33220.New(res, true, true)
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}

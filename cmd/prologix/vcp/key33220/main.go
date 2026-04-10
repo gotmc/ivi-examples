@@ -65,7 +65,7 @@ func main() {
 
 	// Create a new IVI instance of and reset the Agilent 33220 function
 	// generator using the Prologix VCP GPIB device.
-	fg, err := key33220.New(gpib, true)
+	fg, err := key33220.New(gpib, true, true)
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}

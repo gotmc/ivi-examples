@@ -108,7 +108,7 @@ func main() {
 
 	// Create a new IVI instance of the HP/Agilent/Keysight E3631A DC power
 	// supply.
-	ps, err := e36xx.New(gpib, true)
+	ps, err := e36xx.New(gpib, true, true)
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}

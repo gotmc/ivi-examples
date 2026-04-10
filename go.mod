@@ -4,7 +4,7 @@ go 1.25.0
 
 require (
 	github.com/gotmc/asrl v0.12.0
-	github.com/gotmc/ivi v0.20.0
+	github.com/gotmc/ivi v0.21.0
 	github.com/gotmc/lxi v0.15.0
 	github.com/gotmc/usbtmc v0.13.0
 	github.com/gotmc/visa v0.14.0

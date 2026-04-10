@@ -44,7 +44,7 @@ func main() {
 	ctx := context.Background()
 
 	// Create a new IVI instance of the Fluke multimeter
-	dmm, err := fluke45.New(gpib, true)
+	dmm, err := fluke45.New(gpib, true, true)
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}

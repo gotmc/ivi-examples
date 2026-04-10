@@ -45,7 +45,7 @@ func main() {
 
 	// Create a new IVI instance of and reset the Agilent 33220 function
 	// generator using the LXI device.
-	d, err := key3446x.New(dev, true)
+	d, err := key3446x.New(dev, true, true)
 	if err != nil {
 		log.Fatalf("IVI instrument eror: %s", err)
 	}
