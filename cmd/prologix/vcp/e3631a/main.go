@@ -19,6 +19,7 @@ import (
 	"io"
 	"log"
 
+	"github.com/gotmc/ivi"
 	"github.com/gotmc/ivi/dcpwr/keysight/e36xx"
 	"github.com/gotmc/prologix"
 	"github.com/gotmc/prologix/driver/vcp"
@@ -108,7 +109,7 @@ func main() {
 
 	// Create a new IVI instance of the HP/Agilent/Keysight E3631A DC power
 	// supply.
-	ps, err := e36xx.New(gpib, true, true)
+	ps, err := e36xx.New(gpib, ivi.WithIDQuery(), ivi.WithReset())
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}

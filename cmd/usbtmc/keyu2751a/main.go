@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/gotmc/ivi"
 	"github.com/gotmc/ivi/swtch/keysight/u2751a"
 	"github.com/gotmc/usbtmc"
 	_ "github.com/gotmc/usbtmc/driver/google"
@@ -35,9 +36,7 @@ func main() {
 	defer dev.Close()
 
 	// Create a new IVI instance of the Keysight U2751A switch matrix.
-	reset := true
-	standalone := false
-	sw, err := u2751a.New(dev, true, reset, standalone)
+	sw, err := u2751a.New(dev, ivi.WithIDQuery(), ivi.WithReset())
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}

@@ -10,6 +10,7 @@ import (
 	"flag"
 	"log"
 
+	"github.com/gotmc/ivi"
 	"github.com/gotmc/ivi/fgen"
 	"github.com/gotmc/ivi/fgen/keysight/key33220"
 	_ "github.com/gotmc/usbtmc/driver/google"
@@ -57,7 +58,7 @@ func main() {
 
 	// Create a new IVI instance of and reset the Agilent 33220 function
 	// generator using the USBTMC device.
-	inst, err := key33220.New(res, true, true)
+	inst, err := key33220.New(res, ivi.WithIDQuery(), ivi.WithReset())
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}

@@ -12,6 +12,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/gotmc/ivi"
 	"github.com/gotmc/ivi/scope"
 	"github.com/gotmc/ivi/scope/keysight/infiniivision"
 	"github.com/gotmc/lxi"
@@ -45,7 +46,7 @@ func main() {
 
 	// Create a new IVI instance of and reset the Keysight InfiniiVision oscilloscope
 	// using the LXI device.
-	scope1, err := infiniivision.New(dev, true, true)
+	scope1, err := infiniivision.New(dev, ivi.WithIDQuery(), ivi.WithReset())
 	if err != nil {
 		log.Fatalf("IVI instrument eror: %s", err)
 	}

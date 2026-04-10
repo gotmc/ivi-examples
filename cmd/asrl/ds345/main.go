@@ -55,7 +55,7 @@ func main() {
 
 	// Create a new IVI instance of and reset the SRS DS345 function
 	// generator using the serial port.
-	inst, err := ds345.New(dev, true, true)
+	inst, err := ds345.New(dev, ivi.WithIDQuery(), ivi.WithReset())
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}

@@ -17,6 +17,7 @@ import (
 	"context"
 	"log"
 
+	"github.com/gotmc/ivi"
 	"github.com/gotmc/ivi/dmm/fluke/fluke45"
 	"github.com/gotmc/prologix"
 	"github.com/gotmc/prologix/driver/vcp"
@@ -44,7 +45,7 @@ func main() {
 	ctx := context.Background()
 
 	// Create a new IVI instance of the Fluke multimeter
-	dmm, err := fluke45.New(gpib, true, true)
+	dmm, err := fluke45.New(gpib, ivi.WithIDQuery(), ivi.WithReset())
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}

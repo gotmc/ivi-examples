@@ -12,6 +12,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/gotmc/ivi"
 	"github.com/gotmc/ivi/dcpwr"
 	"github.com/gotmc/ivi/dcpwr/kikusui/pmx"
 	"github.com/gotmc/lxi"
@@ -40,7 +41,7 @@ func main() {
 	defer dev.Close()
 
 	// Create a new IVI instance of the KIKUSUI PMW power supply and reset.
-	dcp, err := pmx.New(dev, true, true)
+	dcp, err := pmx.New(dev, ivi.WithIDQuery(), ivi.WithReset())
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}
