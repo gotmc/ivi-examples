@@ -79,12 +79,16 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	row1.SetSourceChannel(ctx, true)
+	if err = row1.SetSourceChannel(ctx, true); err != nil {
+		log.Fatalf("error setting Row1 as source channel: %s", err)
+	}
 	col2, err := sw.Channel(ctx, "Col2")
 	if err != nil {
 		log.Fatal(err)
 	}
-	col2.SetSourceChannel(ctx, false)
+	if err = col2.SetSourceChannel(ctx, false); err != nil {
+		log.Fatalf("error setting Col2 as non-source channel: %s", err)
+	}
 	log.Printf("Row1 is source channel: %t", row1.IsSourceChannel())
 	log.Printf("Col2 is source channel: %t", col2.IsSourceChannel())
 

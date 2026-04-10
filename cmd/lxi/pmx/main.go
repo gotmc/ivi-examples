@@ -44,21 +44,33 @@ func main() {
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}
-	dcp.Reset(ctx)
+	if err = dcp.Reset(ctx); err != nil {
+		log.Fatalf("error resetting instrument: %s", err)
+	}
 
 	// Alternatively, the channel can be assigned to a variable.
 	ch := dcp.Channels[0]
-	ch.DisableOutput(ctx)
-	ch.SetVoltageLevel(ctx, 50)
-	ch.ConfigureCurrentLimit(ctx, dcpwr.CurrentTrip, 0.25)
+	if err = ch.DisableOutput(ctx); err != nil {
+		log.Fatalf("error disabling output: %s", err)
+	}
+	if err = ch.SetVoltageLevel(ctx, 50); err != nil {
+		log.Fatalf("error setting voltage level: %s", err)
+	}
+	if err = ch.ConfigureCurrentLimit(ctx, dcpwr.CurrentTrip, 0.25); err != nil {
+		log.Fatalf("error configuring current limit: %s", err)
+	}
 	// The above command is the same as the following two:
 	// ch.SetCurrentLimitBehavior(ctx, dcpwr.Trip)
 	// ch.SetCurrentLimit(ctx, 0.25)
-	ch.ConfigureOVP(ctx, true, 60)
+	if err = ch.ConfigureOVP(ctx, true, 60); err != nil {
+		log.Fatalf("error configuring OVP: %s", err)
+	}
 	// The above command is the same as the following two:
 	// ch.SetOVPEnabled(ctx, true)
 	// ch.SetOVPLimit(ctx, 60)
-	ch.EnableOutput(ctx)
+	if err = ch.EnableOutput(ctx); err != nil {
+		log.Fatalf("error enabling output: %s", err)
+	}
 
 	// Let the power supply settle before we query it.
 	time.Sleep(500 * time.Millisecond)
