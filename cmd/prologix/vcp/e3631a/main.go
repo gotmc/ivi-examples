@@ -3,14 +3,6 @@
 // Use of this source code is governed by a MIT-style license that
 // can be found in the LICENSE.txt file for the project.
 
-//go:build ignore
-// +build ignore
-
-// NOTE: This example is temporarily excluded from building because the
-// prologix package has not yet been updated with context-aware methods
-// required by the ivi.Instrument interface. Once github.com/gotmc/prologix
-// is updated, remove the "go:build ignore" directive above.
-
 package main
 
 import (
@@ -101,7 +93,7 @@ func main() {
 	}
 
 	// Query the identification of the function generator.
-	idn, err := gpib.Query("*idn?")
+	idn, err := gpib.Query(ctx, "*idn?")
 	if err != nil && err != io.EOF {
 		log.Fatalf("error querying serial port: %s", err)
 	}

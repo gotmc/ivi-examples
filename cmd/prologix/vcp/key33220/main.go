@@ -3,14 +3,6 @@
 // Use of this source code is governed by a MIT-style license that
 // can be found in the LICENSE.txt file for the project.
 
-//go:build ignore
-// +build ignore
-
-// NOTE: This example is temporarily excluded from building because the
-// prologix package has not yet been updated with context-aware methods
-// required by the ivi.Instrument interface. Once github.com/gotmc/prologix
-// is updated, remove the "go:build ignore" directive above.
-
 package main
 
 import (
