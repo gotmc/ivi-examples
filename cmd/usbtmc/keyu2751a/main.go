@@ -40,6 +40,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}
+	defer sw.Close()
 
 	numChannels := sw.ChannelCount()
 	log.Printf("U2751A has %d channels", numChannels)

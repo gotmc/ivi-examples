@@ -59,6 +59,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}
+	defer inst.Close()
 
 	// From here forward, we can use the IVI API for the function generator
 	// instead of having to send SCPI or other commands that are specific to this

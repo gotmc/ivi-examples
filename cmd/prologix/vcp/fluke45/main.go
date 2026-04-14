@@ -45,6 +45,9 @@ func main() {
 	}
 	log.Printf("MeasurementFunction = %s", fcn)
 
+	// Close the IVI driver to return the instrument to local control.
+	dmm.Close()
+
 	// Return local control to the front panel.
 	err = gpib.FrontPanel(true)
 	if err != nil {

@@ -45,6 +45,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}
+	defer dcp.Close()
 	if err = dcp.Reset(); err != nil {
 		log.Fatalf("error resetting instrument: %s", err)
 	}

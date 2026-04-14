@@ -49,6 +49,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}
+	defer fg.Close()
 
 	// Query the instrument identification.
 	mfr, err := fg.InstrumentManufacturer()

@@ -50,6 +50,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("IVI instrument eror: %s", err)
 	}
+	defer scope1.Close()
 
 	// From here forward, we can use the IVI API for the oscilloscope instead of
 	// having to send SCPI or other commands that are specific to this model
