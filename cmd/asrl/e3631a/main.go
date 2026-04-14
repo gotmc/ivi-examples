@@ -55,7 +55,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	dev.HWHandshaking = true
+	dev.SetHWHandshaking(true)
 
 	// Create a new IVI instance of the HP/Agilent/Keysight E3631A DC power
 	// supply. Reset the E3631A in order to clear any previous errors.
@@ -66,10 +66,10 @@ func main() {
 	log.Print("Created new IVI e36xx instrument")
 
 	// Clear and reset the device.
-	if err = ps.Clear(ctx); err != nil {
+	if err = ps.Clear(); err != nil {
 		log.Fatalf("error clearing device: %v", err)
 	}
-	if err = ps.Reset(ctx); err != nil {
+	if err = ps.Reset(); err != nil {
 		log.Fatalf("error resetting device: %v", err)
 	}
 
@@ -80,7 +80,7 @@ func main() {
 	time.Sleep(500 * time.Millisecond)
 
 	log.Print("Sending IVI command InstrumentModel")
-	model, err := ps.InstrumentModel(ctx)
+	model, err := ps.InstrumentModel()
 	if err != nil {
 		log.Fatalf("could not determine instrument model: %s", err)
 	}
@@ -93,7 +93,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("error getting channel 0: %s", err)
 	}
-	err = ch6v.DisableOutput(ctx)
+	err = ch6v.DisableOutput()
 	if err != nil {
 		log.Print(err)
 	}
@@ -101,7 +101,7 @@ func main() {
 	// Set the output voltage
 	desiredVoltage := 5.0
 	log.Printf("Set the voltage to %.2f Vdc", desiredVoltage)
-	err = ch6v.SetVoltageLevel(ctx, desiredVoltage)
+	err = ch6v.SetVoltageLevel(desiredVoltage)
 	if err != nil && err != io.EOF {
 		log.Print(err)
 	}
@@ -109,21 +109,21 @@ func main() {
 	// Set the current limit
 	desiredCurrent := 1.0
 	log.Printf("Set the current limit to %.2f Adc", desiredCurrent)
-	err = ch6v.SetCurrentLimit(ctx, desiredCurrent)
+	err = ch6v.SetCurrentLimit(desiredCurrent)
 	if err != nil {
 		log.Print(err)
 	}
 
 	// Enable the 6V output
 	log.Printf("Enable 6V output")
-	err = ch6v.EnableOutput(ctx)
+	err = ch6v.EnableOutput()
 	if err != nil {
 		log.Print(err)
 	}
 
 	// Query the output voltage setting.
 	log.Printf("Query the set output voltage level")
-	v, err := ch6v.VoltageLevel(ctx)
+	v, err := ch6v.VoltageLevel()
 	if err != nil && err != io.EOF {
 		log.Printf("error reading voltage level: %s", err)
 	}
@@ -131,7 +131,7 @@ func main() {
 
 	// Query the current limit.
 	log.Printf("Query current limit")
-	curr, err := ch6v.CurrentLimit(ctx)
+	curr, err := ch6v.CurrentLimit()
 	if err != nil {
 		log.Print(err)
 	}
@@ -139,7 +139,7 @@ func main() {
 
 	// Measure the output voltage.
 	log.Println("Measure the output voltage")
-	vMsr, err := ch6v.MeasureVoltage(ctx)
+	vMsr, err := ch6v.MeasureVoltage()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -154,7 +154,7 @@ func main() {
 
 	// Measure the output current.
 	log.Println("Measure the output current")
-	cMsr, err := ch6v.MeasureCurrent(ctx)
+	cMsr, err := ch6v.MeasureCurrent()
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -6,7 +6,6 @@
 package main
 
 import (
-	"context"
 	"log"
 
 	"github.com/gotmc/ivi"
@@ -34,15 +33,13 @@ func main() {
 	}
 	log.Printf("Using %s", prologixVer)
 
-	ctx := context.Background()
-
 	// Create a new IVI instance of the Fluke multimeter
 	dmm, err := fluke45.New(gpib, ivi.WithIDQuery(), ivi.WithReset())
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}
 
-	fcn, err := dmm.MeasurementFunction(ctx)
+	fcn, err := dmm.MeasurementFunction()
 	if err != nil {
 		log.Fatalf("error getting measurement function: %s", err)
 	}

@@ -23,8 +23,12 @@ Run examples via Justfile recipes (each requires hardware or a valid network tar
 ```bash
 just k33220lxi 192.168.1.100    # LXI Keysight 33220A function generator
 just k34461lxi 10.12.100.56     # LXI Keysight 34461A DMM
+just k3024lxi 192.168.1.100     # LXI Keysight MSO-X 3024A oscilloscope
 just k33220usb                  # USBTMC Keysight 33220A
-just k33220gpib /dev/tty.usbserial-PX8X3YR6  # Prologix GPIB
+just k33220visa                 # VISA USBTMC Keysight 33220A
+just k33220gpib /dev/tty.usbserial-PX8X3YR6  # Prologix GPIB Keysight 33220A
+just k3631gpib /dev/tty.usbserial             # Prologix GPIB Keysight E3631A
+just k3631asrl /dev/tty.usbserial             # ASRL Keysight E3631A
 just ds345 /dev/tty.usbserial   # ASRL SRS DS345
 ```
 
@@ -48,16 +52,21 @@ Every example follows the same pattern:
 ### Transport patterns
 
 - **LXI** (TCP/IP): Uses `lxi.NewDevice` with a VISA-style address string (`TCPIP0::<ip>::5025::SOCKET`).
-- **USBTMC**: Uses `usbtmc.NewDevice` directly, requires `_ "github.com/gotmc/usbtmc/driver/google"` blank import for the USB backend.
+- **USBTMC**: Uses `usbtmc.NewDevice` directly, requires `_ "github.com/gotmc/usbtmc/driver/google"` blank import for the USB backend. Devices are opened by VID/PID via `usbCtx.NewDeviceByVIDPID()`.
 - **VISA**: Uses `visa.NewResource` with blank imports for both the VISA driver (`_ "github.com/gotmc/visa/driver/usbtmc"`) and USB backend.
-- **Prologix GPIB**: Creates a VCP serial connection, then wraps it with `prologix.NewController(vcp, gpibAddr, resetOnInit)`.
+- **Prologix GPIB**: Creates a VCP serial connection via `vcp.NewVCP(serialPort)`, then wraps it with `prologix.NewController(vcp, gpibAddr, resetOnInit)`. Requires cleanup: `vcp.Flush()` then `vcp.Close()`.
 - **ASRL** (serial): Uses `asrl.NewDevice` with a serial port path.
+
+### IVI driver constructors
+
+All IVI drivers use functional options: `driver.New(dev, ivi.WithIDQuery(), ivi.WithReset())`. The `ivi.WithIDQuery()` option queries the instrument identity on creation; `ivi.WithReset()` sends a `*RST` command.
 
 ### IVI instrument classes used
 
 - `fgen` (Function Generator): `key33220` (Keysight 33220A), `ds345` (SRS DS345)
-- `dmm` (Digital Multimeter): `key3446x` (Keysight 34461A)
-- `dcpwr` (DC Power Supply): `e36xx` (Keysight E3631A)
+- `dmm` (Digital Multimeter): `key3446x` (Keysight 34461A), `fluke45` (Fluke 45)
+- `dcpwr` (DC Power Supply): `e36xx` (Keysight E3631A), `pmx` (Kikusui PMX)
+- `swtch` (Switch): `u2751a` (Keysight U2751A)
 
 ## Go Version
 

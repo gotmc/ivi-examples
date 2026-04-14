@@ -108,7 +108,7 @@ func main() {
 	log.Print("Created new IVI e36xx instrument")
 
 	// log.Print("Sending IVI command InstrumentModel")
-	// model, err := ps.InstrumentModel(ctx)
+	// model, err := ps.InstrumentModel()
 	// if err != nil {
 	// 	log.Fatalf("could not determine instrument model: %s", err)
 	// }
@@ -121,29 +121,29 @@ func main() {
 	if err != nil {
 		log.Fatalf("error getting channel 0: %s", err)
 	}
-	err = ch6v.DisableOutput(ctx)
+	err = ch6v.DisableOutput()
 	if err != nil {
 		log.Print(err)
 	}
 
 	desiredVoltage := 5.0
-	err = ch6v.SetVoltageLevel(ctx, desiredVoltage)
+	err = ch6v.SetVoltageLevel(desiredVoltage)
 	if err != nil && err != io.EOF {
 		log.Print(err)
 	}
 
 	log.Println("Query the voltage level on channel")
-	v, err := ch6v.VoltageLevel(ctx)
+	v, err := ch6v.VoltageLevel()
 	if err != nil && err != io.EOF {
 		log.Printf("error reading voltage level: %s", err)
 	}
 	log.Printf("Output voltage on 6V channel = %.3f Vdc", v)
 
-	err = ch6v.SetCurrentLimit(ctx, 1.0)
+	err = ch6v.SetCurrentLimit(1.0)
 	if err != nil {
 		log.Print(err)
 	}
-	err = ch6v.EnableOutput(ctx)
+	err = ch6v.EnableOutput()
 	if err != nil {
 		log.Print(err)
 	}

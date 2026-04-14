@@ -56,35 +56,35 @@ func main() {
 	// model function generator.
 
 	// Query the instrument manufacturer.
-	mfr, err := d.InstrumentManufacturer(ctx)
+	mfr, err := d.InstrumentManufacturer()
 	if err != nil {
 		log.Printf("error querying instrument manufacturer: %s", err)
 	}
 	log.Printf("Instrument manufacturer = %s", mfr)
 
 	// Query the instrument model.
-	model, err := d.InstrumentModel(ctx)
+	model, err := d.InstrumentModel()
 	if err != nil {
 		log.Printf("error querying instrument model: %s", err)
 	}
 	log.Printf("Instrument model = %s", model)
 
 	// Query the instrument's serial number.
-	sn, err := d.InstrumentSerialNumber(ctx)
+	sn, err := d.InstrumentSerialNumber()
 	if err != nil {
 		log.Printf("error querying instrument sn: %s", err)
 	}
 	log.Printf("Instrument S/N = %s", sn)
 
 	// Query the firmware revision.
-	fw, err := d.FirmwareRevision(ctx)
+	fw, err := d.FirmwareRevision()
 	if err != nil {
 		log.Printf("error querying firmware revision: %s", err)
 	}
 	log.Printf("Firmware revision = %s", fw)
 
 	// Query the measurement function.
-	fcn, err := d.MeasurementFunction(ctx)
+	fcn, err := d.MeasurementFunction()
 	if err != nil {
 		log.Printf("error querying the measurement function: %s", err)
 	}
@@ -93,44 +93,44 @@ func main() {
 	// Set the measurement function to DC volts and then query.
 	newFcn := dmm.DCVolts
 	log.Printf("Setting the measurement function to %s", newFcn)
-	err = d.SetMeasurementFunction(ctx, newFcn)
+	err = d.SetMeasurementFunction(newFcn)
 	if err != nil {
 		log.Printf("error setting the measurement function: %s", err)
 	}
-	fcn, err = d.MeasurementFunction(ctx)
+	fcn, err = d.MeasurementFunction()
 	if err != nil {
 		log.Printf("error querying the measurement function: %s", err)
 	}
 	log.Printf("Measurement function = %s", fcn)
 
 	// Query the range.
-	autoRange, rng, err := d.Range(ctx)
+	autoRange, rng, err := d.Range()
 	if err != nil {
 		log.Printf("error querying the range: %s", err)
 	}
 	log.Printf("Range = %.f V / %s", rng, autoRange)
 
 	// Set the manual range.
-	err = d.SetRange(ctx, dmm.AutoOff, 10.0)
+	err = d.SetRange(dmm.AutoOff, 10.0)
 	if err != nil {
 		log.Printf("error setting the manual range to 10V: %s", err)
 	}
 
 	// Query the range.
-	autoRange, rng, err = d.Range(ctx)
+	autoRange, rng, err = d.Range()
 	if err != nil {
 		log.Printf("error querying the range: %s", err)
 	}
 	log.Printf("Range = %.f V / %s", rng, autoRange)
 
 	// Set the auto range.
-	err = d.SetRange(ctx, dmm.AutoOn, 0.0)
+	err = d.SetRange(dmm.AutoOn, 0.0)
 	if err != nil {
 		log.Printf("error setting the auto range: %s", err)
 	}
 
 	// Query the range.
-	autoRange, rng, err = d.Range(ctx)
+	autoRange, rng, err = d.Range()
 	if err != nil {
 		log.Printf("error querying the range: %s", err)
 	}
@@ -139,24 +139,24 @@ func main() {
 	// Set the measurement function to resistance and then query.
 	newFcn = dmm.TwoWireResistance
 	log.Printf("Setting the measurement function to %s", newFcn)
-	err = d.SetMeasurementFunction(ctx, newFcn)
+	err = d.SetMeasurementFunction(newFcn)
 	if err != nil {
 		log.Printf("error setting the measurement function: %s", err)
 	}
-	fcn, err = d.MeasurementFunction(ctx)
+	fcn, err = d.MeasurementFunction()
 	if err != nil {
 		log.Printf("error querying the measurement function: %s", err)
 	}
 	log.Printf("Measurement function = %s", fcn)
 
 	// Set the manual range.
-	err = d.SetRange(ctx, dmm.AutoOff, 100e6)
+	err = d.SetRange(dmm.AutoOff, 100e6)
 	if err != nil {
 		log.Printf("error setting the manual range to 100 MΩ: %s", err)
 	}
 
 	// Query the range.
-	autoRange, rng, err = d.Range(ctx)
+	autoRange, rng, err = d.Range()
 	if err != nil {
 		log.Printf("error querying the range: %s", err)
 	}
@@ -165,11 +165,11 @@ func main() {
 	// Set the measurement function to DC volts and then query.
 	newFcn = dmm.DCVolts
 	log.Printf("Setting the measurement function to %s", newFcn)
-	err = d.SetMeasurementFunction(ctx, newFcn)
+	err = d.SetMeasurementFunction(newFcn)
 	if err != nil {
 		log.Printf("error setting the measurement function: %s", err)
 	}
-	fcn, err = d.MeasurementFunction(ctx)
+	fcn, err = d.MeasurementFunction()
 	if err != nil {
 		log.Printf("error querying the measurement function: %s", err)
 	}
@@ -177,32 +177,32 @@ func main() {
 
 	// Set the range to auto.
 	log.Println("Enabling auto range")
-	err = d.SetRange(ctx, dmm.AutoOn, 0.0)
+	err = d.SetRange(dmm.AutoOn, 0.0)
 	if err != nil {
 		log.Printf("error enabling auto range: %s", err)
 	}
-	autoRange, rng, err = d.Range(ctx)
+	autoRange, rng, err = d.Range()
 	if err != nil {
 		log.Printf("error querying the range: %s", err)
 	}
 	log.Printf("Range = %g ohms / %s", rng, autoRange)
 
 	// Read the measurement.
-	msr, err := d.ReadMeasurement(ctx, 100*time.Millisecond)
+	msr, err := d.ReadMeasurement(100 * time.Millisecond)
 	if err != nil {
 		log.Printf("error reading the measurement: %s", err)
 	}
 	log.Printf("Measurement reading #1 = %g V", msr)
 
 	// Read the measurement.
-	msr, err = d.ReadMeasurement(ctx, 100*time.Millisecond)
+	msr, err = d.ReadMeasurement(100 * time.Millisecond)
 	if err != nil {
 		log.Printf("error reading the measurement: %s", err)
 	}
 	log.Printf("Measurement reading #2 = %g V", msr)
 
 	// Read the measurement.
-	msr, err = d.ReadMeasurement(ctx, 100*time.Millisecond)
+	msr, err = d.ReadMeasurement(100 * time.Millisecond)
 	if err != nil {
 		log.Printf("error reading the measurement: %s", err)
 	}
@@ -211,18 +211,18 @@ func main() {
 	// Set the measurement function to frequency and then query.
 	newFcn = dmm.Frequency
 	log.Printf("Setting the measurement function to %s", newFcn)
-	err = d.SetMeasurementFunction(ctx, newFcn)
+	err = d.SetMeasurementFunction(newFcn)
 	if err != nil {
 		log.Printf("error setting the measurement function: %s", err)
 	}
-	fcn, err = d.MeasurementFunction(ctx)
+	fcn, err = d.MeasurementFunction()
 	if err != nil {
 		log.Printf("error querying the measurement function: %s", err)
 	}
 	log.Printf("Measurement function = %s", fcn)
 
 	// Read the frequency.
-	msr, err = d.ReadMeasurement(ctx, 100*time.Millisecond)
+	msr, err = d.ReadMeasurement(100 * time.Millisecond)
 	if err != nil {
 		log.Printf("error reading the measurement: %s", err)
 	}
@@ -231,25 +231,25 @@ func main() {
 	// Set the measurement function to period and then query.
 	newFcn = dmm.Period
 	log.Printf("Setting the measurement function to %s", newFcn)
-	err = d.SetMeasurementFunction(ctx, newFcn)
+	err = d.SetMeasurementFunction(newFcn)
 	if err != nil {
 		log.Printf("error setting the measurement function: %s", err)
 	}
-	fcn, err = d.MeasurementFunction(ctx)
+	fcn, err = d.MeasurementFunction()
 	if err != nil {
 		log.Printf("error querying the measurement function: %s", err)
 	}
 	log.Printf("Measurement function = %s", fcn)
 
 	// Read the period.
-	msr, err = d.ReadMeasurement(ctx, 100*time.Millisecond)
+	msr, err = d.ReadMeasurement(100 * time.Millisecond)
 	if err != nil {
 		log.Printf("error reading the measurement: %s", err)
 	}
 	log.Printf("Period = %g s", msr)
 
 	// Query the terminals selected.
-	term, err := d.SelectedTerminals(ctx)
+	term, err := d.SelectedTerminals()
 	if err != nil {
 		log.Printf("error querying the select terminals: %s", err)
 	}

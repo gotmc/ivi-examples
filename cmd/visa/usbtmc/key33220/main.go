@@ -68,28 +68,28 @@ func main() {
 	// model function generator.
 
 	// Query the instrument manufacturer.
-	mfr, err := inst.InstrumentManufacturer(ctx)
+	mfr, err := inst.InstrumentManufacturer()
 	if err != nil {
 		log.Printf("error querying instrument manufacturer: %s", err)
 	}
 	log.Printf("Instrument manufacturer = %s", mfr)
 
 	// Query the instrument model.
-	model, err := inst.InstrumentModel(ctx)
+	model, err := inst.InstrumentModel()
 	if err != nil {
 		log.Printf("error querying instrument model: %s", err)
 	}
 	log.Printf("Instrument model = %s", model)
 
 	// Query the instrument's serial number.
-	sn, err := inst.InstrumentSerialNumber(ctx)
+	sn, err := inst.InstrumentSerialNumber()
 	if err != nil {
 		log.Printf("error querying instrument sn: %s", err)
 	}
 	log.Printf("Instrument S/N = %s", sn)
 
 	// Query the firmware revision.
-	fw, err := inst.FirmwareRevision(ctx)
+	fw, err := inst.FirmwareRevision()
 	if err != nil {
 		log.Printf("error querying firmware revision: %s", err)
 	}
@@ -101,99 +101,99 @@ func main() {
 	if err != nil {
 		log.Fatalf("error getting channel 0: %s", err)
 	}
-	if err = ch.DisableOutput(ctx); err != nil {
+	if err = ch.DisableOutput(); err != nil {
 		log.Fatalf("error disabling output on ch0: %s", err)
 	}
-	if err = ch.SetAmplitude(ctx, 2.1); err != nil {
+	if err = ch.SetAmplitude(2.1); err != nil {
 		log.Fatalf("error setting the amplitude on ch0: %s", err)
 	}
-	if err = ch.SetStandardWaveform(ctx, fgen.Sine); err != nil {
+	if err = ch.SetStandardWaveform(fgen.Sine); err != nil {
 		log.Fatalf("error setting the standard waveform: %s", err)
 	}
-	if err = ch.SetDCOffset(ctx, 0.3); err != nil {
+	if err = ch.SetDCOffset(0.3); err != nil {
 		log.Fatalf("error setting DC offest: %s", err)
 	}
-	if err = ch.SetFrequency(ctx, 2230); err != nil {
+	if err = ch.SetFrequency(2230); err != nil {
 		log.Fatalf("error setting frequency: %s", err)
 	}
 
 	// Instead of configuring attributes of a standard waveform individually, the
 	// standard waveform can be configured using a single method.
-	if err = ch.ConfigureStandardWaveform(ctx, fgen.Sine, 0.5, 0.0, 100, 0); err != nil {
+	if err = ch.ConfigureStandardWaveform(fgen.Sine, 0.5, 0.0, 100, 0); err != nil {
 		log.Fatalf("error configuring standard waveform: %s", err)
 	}
 
 	// Setup a bursted sinusoidal waveform.
-	if err = ch.SetBurstCount(ctx, 10); err != nil {
+	if err = ch.SetBurstCount(10); err != nil {
 		log.Fatalf("error setting burst count: %s", err)
 	}
 	// Set the code period to 60 ms.
-	if err = inst.SetInternalTriggerRate(ctx, 1/0.6); err != nil {
+	if err = inst.SetInternalTriggerRate(1 / 0.6); err != nil {
 		log.Fatalf("error setting the internal trigger rate: %s", err)
 	}
-	if err = ch.SetStartTriggerSource(ctx, fgen.TriggerSourceInternal); err != nil {
+	if err = ch.SetStartTriggerSource(fgen.TriggerSourceInternal); err != nil {
 		log.Fatalf("error setting the trigger source: %s", err)
 	}
-	if err = ch.SetOperationMode(ctx, fgen.BurstMode); err != nil {
+	if err = ch.SetOperationMode(fgen.BurstMode); err != nil {
 		log.Fatalf("error setting the operation mode to burst: %s", err)
 	}
 
 	// Enable the output.
-	if err = ch.EnableOutput(ctx); err != nil {
+	if err = ch.EnableOutput(); err != nil {
 		log.Fatalf("error enabling the output: %s", err)
 	}
 
 	// Query the frequency.
-	freq, err := ch.Frequency(ctx)
+	freq, err := ch.Frequency()
 	if err != nil {
 		log.Printf("error querying frequency: %s", err)
 	}
 	log.Printf("Frequency = %.0f Hz", freq)
 
 	// Query the amplitude.
-	amp, err := ch.Amplitude(ctx)
+	amp, err := ch.Amplitude()
 	if err != nil {
 		log.Printf("error querying amplitude: %s", err)
 	}
 	log.Printf("Amplitude = %.3f Vpp", amp)
 
 	// Query the DC offset voltage.
-	offset, err := ch.DCOffset(ctx)
+	offset, err := ch.DCOffset()
 	if err != nil {
 		log.Printf("error querying DC offset: %s", err)
 	}
 	log.Printf("DC Offset = %.1f mV", 1000*offset)
 
 	// Query the standard waveform.
-	wave, err := ch.StandardWaveform(ctx)
+	wave, err := ch.StandardWaveform()
 	if err != nil {
 		log.Printf("error querying standard waveform: %s", err)
 	}
 	log.Printf("Standard waveform = %s", wave)
 
 	// Query the burst count.
-	bc, err := ch.BurstCount(ctx)
+	bc, err := ch.BurstCount()
 	if err != nil {
 		log.Printf("error querying burst count: %s", err)
 	}
 	log.Printf("Burst count = %d", bc)
 
 	// Query the internal trigger rate.
-	itr, err := inst.InternalTriggerRate(ctx)
+	itr, err := inst.InternalTriggerRate()
 	if err != nil {
 		log.Printf("error querying internal trigger rate: %s", err)
 	}
 	log.Printf("Internal trigger rate = %.1f Hz", itr)
 
 	// Query the trigger source.
-	ts, err := ch.StartTriggerSource(ctx)
+	ts, err := ch.StartTriggerSource()
 	if err != nil {
 		log.Printf("error querying start trigger source: %s", err)
 	}
 	log.Printf("Start trigger source = %s", ts)
 
 	// Query the operation mode.
-	om, err := ch.OperationMode(ctx)
+	om, err := ch.OperationMode()
 	if err != nil {
 		log.Printf("error querying operation mode: %s", err)
 	}

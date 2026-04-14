@@ -45,7 +45,7 @@ func main() {
 	log.Printf("U2751A has %d channels", numChannels)
 
 	// Determine instrument model.
-	model, err := sw.InstrumentModel(ctx)
+	model, err := sw.InstrumentModel()
 	if err != nil {
 		log.Printf("error querying instrument model: %s", err)
 	}
@@ -53,7 +53,7 @@ func main() {
 
 	// Get a channel by ID and determine the wiremode.
 	idx := 0
-	ch, err := sw.ChannelByID(ctx, idx)
+	ch, err := sw.ChannelByID(idx)
 	if err != nil {
 		log.Fatalf("Could not find channel %d: %s", idx, err)
 	}
@@ -68,38 +68,38 @@ func main() {
 		"Col2": "pin2",
 	}
 
-	err = sw.SetVirtualNames(ctx, vn)
+	err = sw.SetVirtualNames(vn)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Get a row and a column and set the row to a source channel.
-	row1, err := sw.Channel(ctx, "Row1")
+	row1, err := sw.Channel("Row1")
 	if err != nil {
 		log.Fatal(err)
 	}
-	if err = row1.SetSourceChannel(ctx, true); err != nil {
+	if err = row1.SetSourceChannel(true); err != nil {
 		log.Fatalf("error setting Row1 as source channel: %s", err)
 	}
-	col2, err := sw.Channel(ctx, "Col2")
+	col2, err := sw.Channel("Col2")
 	if err != nil {
 		log.Fatal(err)
 	}
-	if err = col2.SetSourceChannel(ctx, false); err != nil {
+	if err = col2.SetSourceChannel(false); err != nil {
 		log.Fatalf("error setting Col2 as non-source channel: %s", err)
 	}
 	log.Printf("Row1 is source channel: %t", row1.IsSourceChannel())
 	log.Printf("Col2 is source channel: %t", col2.IsSourceChannel())
 
 	// Make a connection
-	err = sw.Connect(ctx, "Row1", "Col2")
+	err = sw.Connect("Row1", "Col2")
 	if err != nil {
 		log.Fatalf("could not connect Row1 and Col2: %s", err)
 	}
 	log.Printf("Connected Row1 (source channel) and Col2 (non-source channel)")
 
 	// Try to make an invalid connection.
-	err = sw.Connect(ctx, "Col1", "Col2")
+	err = sw.Connect("Col1", "Col2")
 	if err != nil {
 		log.Printf("error trying to connect Col1 and Col2: %s", err)
 	}

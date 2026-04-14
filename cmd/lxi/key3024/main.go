@@ -56,28 +56,28 @@ func main() {
 	// oscilloscope.
 
 	// Query the instrument manufacturer.
-	mfr, err := scope1.InstrumentManufacturer(ctx)
+	mfr, err := scope1.InstrumentManufacturer()
 	if err != nil {
 		log.Printf("error querying instrument manufacturer: %s", err)
 	}
 	log.Printf("Instrument manufacturer = %s", mfr)
 
 	// Query the instrument model.
-	model, err := scope1.InstrumentModel(ctx)
+	model, err := scope1.InstrumentModel()
 	if err != nil {
 		log.Printf("error querying instrument model: %s", err)
 	}
 	log.Printf("Instrument model = %s", model)
 
 	// Query the instrument's serial number.
-	sn, err := scope1.InstrumentSerialNumber(ctx)
+	sn, err := scope1.InstrumentSerialNumber()
 	if err != nil {
 		log.Printf("error querying instrument sn: %s", err)
 	}
 	log.Printf("Instrument S/N = %s", sn)
 
 	// Query the firmware revision.
-	fw, err := scope1.FirmwareRevision(ctx)
+	fw, err := scope1.FirmwareRevision()
 	if err != nil {
 		log.Printf("error querying firmware revision: %s", err)
 	}
@@ -90,65 +90,65 @@ func main() {
 	if err != nil {
 		log.Fatalf("error getting channel 0: %s", err)
 	}
-	if err = ch1.SetInputImpedance(ctx, 50.0); err != nil {
+	if err = ch1.SetInputImpedance(50.0); err != nil {
 		panic(err)
 	}
 
 	// Set the total vertical range to 800 mV for CH1.
-	if err = ch1.SetVerticalRange(ctx, 0.8); err != nil {
+	if err = ch1.SetVerticalRange(0.8); err != nil {
 		panic(err)
 	}
 
 	// Set the vertical offset to 0 V for CH1.
-	if err = ch1.SetVerticalOffset(ctx, 0.0); err != nil {
+	if err = ch1.SetVerticalOffset(0.0); err != nil {
 		panic(err)
 	}
 
 	// Set the vertical coupling to DC for CH1.
-	if err = ch1.SetVerticalCoupling(ctx, scope.DCVerticalCoupling); err != nil {
+	if err = ch1.SetVerticalCoupling(scope.DCVerticalCoupling); err != nil {
 		panic(err)
 	}
 
 	// Set the probe attenuation to 1:1 for CH1.
-	if err = ch1.SetProbeAttenuation(ctx, 1.0); err != nil {
+	if err = ch1.SetProbeAttenuation(1.0); err != nil {
 		panic(err)
 	}
 
 	// Disable CH1.
-	if err = ch1.SetChannelEnabled(ctx, false); err != nil {
+	if err = ch1.SetChannelEnabled(false); err != nil {
 		panic(err)
 	}
 
 	// Set the vertical range, vertical offset, vertical coupling, disable auto
 	// probe attentuation, set the probe attenuation, and enable the channel in
 	// one command.
-	if err = ch1.Configure(ctx, 0.8, 0.0, scope.DCVerticalCoupling, false, 1.0, true); err != nil {
+	if err = ch1.Configure(0.8, 0.0, scope.DCVerticalCoupling, false, 1.0, true); err != nil {
 		panic(err)
 	}
 
 	// Query the acquisition type.
-	acqType, err := scope1.AcquisitionType(ctx)
+	acqType, err := scope1.AcquisitionType()
 	if err != nil {
 		panic(err)
 	}
 	log.Printf("Acquisition type = %v", acqType)
 
 	// Query the acquisition record length.
-	recordLength, err := scope1.AcquisitionRecordLength(ctx)
+	recordLength, err := scope1.AcquisitionRecordLength()
 	if err != nil {
 		panic(err)
 	}
 	log.Printf("Acquisition record length = %d", recordLength)
 
 	// Query the acquisition sample rate.
-	sampleRate, err := scope1.AcquisitionSampleRate(ctx)
+	sampleRate, err := scope1.AcquisitionSampleRate()
 	if err != nil {
 		panic(err)
 	}
 	log.Printf("Acquisition sample rate = %g samples/sec", sampleRate)
 
 	// Query the acquistion time per record.
-	timePerRecord, err := scope1.AcquisitionTimePerRecord(ctx)
+	timePerRecord, err := scope1.AcquisitionTimePerRecord()
 	if err != nil {
 		panic(err)
 	}
@@ -157,12 +157,12 @@ func main() {
 	// Set the acquisition time per record.
 	timePerRecord = 120 * time.Millisecond
 	log.Printf("Setting the acquisition time per record to %s", timePerRecord)
-	if err = scope1.SetAcquisitionTimePerRecord(ctx, timePerRecord); err != nil {
+	if err = scope1.SetAcquisitionTimePerRecord(timePerRecord); err != nil {
 		panic(err)
 	}
 
 	// Query the acquistion time per record.
-	timePerRecord, err = scope1.AcquisitionTimePerRecord(ctx)
+	timePerRecord, err = scope1.AcquisitionTimePerRecord()
 	if err != nil {
 		panic(err)
 	}
@@ -170,12 +170,12 @@ func main() {
 
 	// Set the trigger type to edge.
 	log.Printf("Setting the trigger type to edge")
-	if err = scope1.SetTriggerType(ctx, scope.EdgeTrigger); err != nil {
+	if err = scope1.SetTriggerType(scope.EdgeTrigger); err != nil {
 		panic(err)
 	}
 
 	// Query the trigger type.
-	triggerType, err := scope1.TriggerType(ctx)
+	triggerType, err := scope1.TriggerType()
 	if err != nil {
 		panic(err)
 	}
@@ -183,12 +183,12 @@ func main() {
 
 	// Set the trigger level to 100 mV.
 	log.Printf("Setting the trigger level to 15 mV")
-	if err = scope1.SetTriggerLevel(ctx, 0.015); err != nil {
+	if err = scope1.SetTriggerLevel(0.015); err != nil {
 		panic(err)
 	}
 
 	// Query the trigger level.
-	triggerLevel, err := scope1.TriggerLevel(ctx)
+	triggerLevel, err := scope1.TriggerLevel()
 	if err != nil {
 		panic(err)
 	}
@@ -196,31 +196,31 @@ func main() {
 
 	// Set the trigger holdoff to 40 ms since we have four bursts with 10 ms
 	// period (1 / 100 Hz) from the function generator.
-	if err = scope1.SetTriggerHoldoff(ctx, 40*time.Millisecond); err != nil {
+	if err = scope1.SetTriggerHoldoff(40 * time.Millisecond); err != nil {
 		panic(err)
 	}
 
 	// // Set the trigger delay to 50 ms.
-	// if err = scope1.SetAcquisitionStartTime(ctx, 50 * time.Millisecond); err != nil {
+	// if err = scope1.SetAcquisitionStartTime(50 * time.Millisecond); err != nil {
 	// 	panic(err)
 	// }
 
 	// Query the trigger delay.
-	delay, err := scope1.AcquisitionStartTime(ctx)
+	delay, err := scope1.AcquisitionStartTime()
 	if err != nil {
 		panic(err)
 	}
 	log.Printf("Acquisition start time delay = %s", delay)
 
 	// Measure the peak-to-peak voltage
-	vpp, err := ch1.FetchWaveformMeasurement(ctx, scope.VoltagePeakToPeak)
+	vpp, err := ch1.FetchWaveformMeasurement(scope.VoltagePeakToPeak)
 	if err != nil {
 		panic(err)
 	}
 	log.Printf("Voltage peak-to-peak = %.3f Vpp", vpp)
 
 	// Measure the frequency
-	freq, err := ch1.FetchWaveformMeasurement(ctx, scope.Frequency)
+	freq, err := ch1.FetchWaveformMeasurement(scope.Frequency)
 	if err != nil {
 		panic(err)
 	}

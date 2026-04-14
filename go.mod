@@ -1,10 +1,10 @@
 module github.com/gotmc/ivi-examples
 
-go 1.25.0
+go 1.26
 
 require (
 	github.com/gotmc/asrl v0.13.0
-	github.com/gotmc/ivi v0.23.0
+	github.com/gotmc/ivi v0.24.0
 	github.com/gotmc/lxi v0.16.0
 	github.com/gotmc/prologix v0.10.0
 	github.com/gotmc/usbtmc v0.14.0
