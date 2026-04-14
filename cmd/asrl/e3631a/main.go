@@ -50,12 +50,10 @@ func main() {
 	// Open the serial port.
 	address := fmt.Sprintf("ASRL::%s::%d::8N2::INSTR", serialPort, baudRate)
 	log.Printf("VISA Address = %s", address)
-	dev, err := asrl.NewDevice(ctx, address)
+	dev, err := asrl.NewDevice(ctx, address, asrl.WithHWHandshaking(true))
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	dev.SetHWHandshaking(true)
 
 	// Create a new IVI instance of the HP/Agilent/Keysight E3631A DC power
 	// supply. Reset the E3631A in order to clear any previous errors.
