@@ -85,9 +85,26 @@ func main() {
 		log.Fatalf("error disabling output on ch1: %s", err)
 	}
 
-	// Configure a 1 kHz sine wave with 1.0 Vpp amplitude and 0.0 V offset.
-	if err = ch1.ConfigureStandardWaveform(fgen.Sine, 1.0, 0.0, 1000.0, 0.0); err != nil {
+	if err = ch1.ConfigureStandardWaveform(fgen.Sine, 0.5, 0.0, 100.0, 0.0); err != nil {
 		log.Fatalf("error configuring standard waveform on ch1: %s", err)
+	}
+
+	// Configure a burst waveform using the above 100 Hz sine wave with 400 ms
+	// on-time and 200 ms off-time for a total period of 600 ms.
+	if err = ch1.SetOperationMode(fgen.BurstMode); err != nil {
+		log.Fatalf("error setting burst mode: %s", err)
+	}
+
+	if err = ch1.SetBurstCount(4); err != nil {
+		log.Fatalf("error setting burst count: %s", err)
+	}
+
+	if err = ch1.SetStartTriggerSource(fgen.TriggerSourceInternal); err != nil {
+		log.Fatalf("error setting internal trigger source: %s", err)
+	}
+
+	if err = fg.SetInternalTriggerRate(1 / 0.06); err != nil {
+		log.Fatalf("error setting internal trigger rate: %s", err)
 	}
 
 	if err = ch1.EnableOutput(); err != nil {
