@@ -85,6 +85,15 @@ ds345 port:
   env go build -o ds345
   ./ds345 -port={{port}}
 
+# Run the LXI Keysight 33512B fcn gen example.
+[group('examples')]
+k33512lxi ip:
+  #!/usr/bin/env bash
+  echo '# IVI LXI Keysight 33512B Example Application'
+  cd {{justfile_directory()}}/cmd/lxi/key33512
+  env go build -o key33512
+  ./key33512 -ip={{ip}}
+
 # Run the LXI Keysight 33220A fcn gen example.
 [group('examples')]
 k33220lxi ip:
