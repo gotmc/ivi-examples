@@ -165,7 +165,7 @@ func main() {
 	log.Printf("Burst count = %d", bc)
 
 	// Query the internal trigger rate.
-	itr, err := fg.InternalTriggerRate()
+	itr, err := ch.InternalTriggerRate()
 	if err != nil {
 		log.Printf("error querying internal trigger rate: %s", err)
 	}

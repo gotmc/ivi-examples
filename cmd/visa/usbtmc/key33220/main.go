@@ -128,7 +128,7 @@ func main() {
 		log.Fatalf("error setting burst count: %s", err)
 	}
 	// Set the code period to 60 ms.
-	if err = inst.SetInternalTriggerRate(1 / 0.6); err != nil {
+	if err = ch.SetInternalTriggerRate(1 / 0.6); err != nil {
 		log.Fatalf("error setting the internal trigger rate: %s", err)
 	}
 	if err = ch.SetStartTriggerSource(fgen.TriggerSourceInternal); err != nil {
@@ -179,7 +179,7 @@ func main() {
 	log.Printf("Burst count = %d", bc)
 
 	// Query the internal trigger rate.
-	itr, err := inst.InternalTriggerRate()
+	itr, err := ch.InternalTriggerRate()
 	if err != nil {
 		log.Printf("error querying internal trigger rate: %s", err)
 	}

@@ -136,7 +136,7 @@ func main() {
 		log.Fatalf("error setting internal trigger source: %s", err)
 	}
 
-	if err = inst.SetInternalTriggerRate(1 / 0.06); err != nil {
+	if err = ch.SetInternalTriggerRate(1 / 0.06); err != nil {
 		log.Fatalf("error setting internal trigger rate: %s", err)
 	}
 
@@ -180,7 +180,7 @@ func main() {
 	log.Printf("Burst count = %d", bc)
 
 	// Query the internal trigger rate.
-	itr, err := inst.InternalTriggerRate()
+	itr, err := ch.InternalTriggerRate()
 	if err != nil {
 		log.Printf("error querying internal trigger rate: %s", err)
 	}
