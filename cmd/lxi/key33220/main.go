@@ -41,7 +41,11 @@ func main() {
 	}
 
 	// Close the LXI device when done.
-	defer dev.Close()
+	defer func() {
+		if err := dev.Close(); err != nil {
+			log.Printf("error closing LXI device: %s", err)
+		}
+	}()
 
 	// Create a new IVI instance and reset the Agilent 33220 function generator
 	// using the LXI device.
@@ -49,7 +53,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("IVI instrument eror: %s", err)
 	}
-	defer fg.Close()
+	defer func() {
+		if err := fg.Close(); err != nil {
+			log.Printf("error closing IVI driver: %s", err)
+		}
+	}()
 
 	// From here forward, we can use the IVI API for the function generator
 	// instead of having to send SCPI or other commands that are specific to

@@ -41,7 +41,11 @@ func main() {
 	}
 
 	// Close the LXI device when done.
-	defer dev.Close()
+	defer func() {
+		if err := dev.Close(); err != nil {
+			log.Printf("error closing LXI device: %s", err)
+		}
+	}()
 
 	// Create a new IVI instance and reset the Keysight 33512B function generator
 	// using the LXI device.
@@ -49,7 +53,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}
-	defer fg.Close()
+	defer func() {
+		if err := fg.Close(); err != nil {
+			log.Printf("error closing IVI driver: %s", err)
+		}
+	}()
 
 	// Query the instrument identification.
 	mfr, err := fg.InstrumentManufacturer()

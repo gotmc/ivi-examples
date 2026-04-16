@@ -38,14 +38,22 @@ func main() {
 	if err != nil {
 		log.Fatalf("NewDevice error: %s", err)
 	}
-	defer dev.Close()
+	defer func() {
+		if err := dev.Close(); err != nil {
+			log.Printf("error closing LXI device: %s", err)
+		}
+	}()
 
 	// Create a new IVI instance of the KIKUSUI PMW power supply and reset.
 	dcp, err := pmx.New(dev, ivi.WithIDQuery(), ivi.WithReset())
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}
-	defer dcp.Close()
+	defer func() {
+		if err := dcp.Close(); err != nil {
+			log.Printf("error closing IVI driver: %s", err)
+		}
+	}()
 	if err = dcp.Reset(); err != nil {
 		log.Fatalf("error resetting instrument: %s", err)
 	}

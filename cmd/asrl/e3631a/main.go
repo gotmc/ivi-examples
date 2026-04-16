@@ -158,10 +158,14 @@ func main() {
 	}
 	log.Printf("Measured current = %.3f Adc", cMsr)
 
-	ps.Close()
+	if err := ps.Close(); err != nil {
+		log.Printf("error closing IVI driver: %s", err)
+	}
 	if err = dev.Command(ctx, "system:local"); err != nil {
 		log.Fatalf("error setting to local: %v", err)
 	}
-	dev.Close()
+	if err := dev.Close(); err != nil {
+		log.Printf("error closing device: %s", err)
+	}
 
 }

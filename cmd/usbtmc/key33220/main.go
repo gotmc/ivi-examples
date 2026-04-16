@@ -57,7 +57,11 @@ func main() {
 	usbCtx.SetDebugLevel(int(debugLevel))
 
 	// Close the USBMTC context when finished.
-	defer usbCtx.Close()
+	defer func() {
+		if err := usbCtx.Close(); err != nil {
+			log.Printf("error closing USBTMC context: %s", err)
+		}
+	}()
 
 	// Create a new USBTMC device and then close when finished.
 	log.Printf("VISA address = %s", address)
@@ -65,7 +69,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("NewDevice error: %s", err)
 	}
-	defer dev.Close()
+	defer func() {
+		if err := dev.Close(); err != nil {
+			log.Printf("error closing USBTMC device: %s", err)
+		}
+	}()
 
 	// Create a new IVI instance of and reset the Agilent 33220 function
 	// generator using the USBTMC device.
@@ -73,7 +81,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}
-	defer fg.Close()
+	defer func() {
+		if err := fg.Close(); err != nil {
+			log.Printf("error closing IVI driver: %s", err)
+		}
+	}()
 
 	// From here forward, we can use the IVI API for the function generator
 	// instead of having to send SCPI or other commands that are specific to this

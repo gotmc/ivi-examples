@@ -200,7 +200,9 @@ func main() {
 	log.Printf("Operation mode = %s", om)
 
 	// Close the IVI driver and VISA resource.
-	inst.Close()
+	if err := inst.Close(); err != nil {
+		log.Printf("error closing IVI driver: %s", err)
+	}
 	err = res.Close()
 	if err != nil {
 		log.Printf("Error closing VISA resource: %s", err)

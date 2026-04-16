@@ -25,7 +25,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error creating new USB context: %s", err)
 	}
-	defer usbCtx.Close()
+	defer func() {
+		if err := usbCtx.Close(); err != nil {
+			log.Printf("error closing USBTMC context: %s", err)
+		}
+	}()
 	usbCtx.SetDebugLevel(1)
 
 	// Create a new USBTMC device
@@ -33,14 +37,22 @@ func main() {
 	if err != nil {
 		log.Fatalf("NewDevice error: %s", err)
 	}
-	defer dev.Close()
+	defer func() {
+		if err := dev.Close(); err != nil {
+			log.Printf("error closing USBTMC device: %s", err)
+		}
+	}()
 
 	// Create a new IVI instance of the Keysight U2751A switch matrix.
 	sw, err := u2751a.New(dev, ivi.WithIDQuery(), ivi.WithReset())
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}
-	defer sw.Close()
+	defer func() {
+		if err := sw.Close(); err != nil {
+			log.Printf("error closing IVI driver: %s", err)
+		}
+	}()
 
 	numChannels := sw.ChannelCount()
 	log.Printf("U2751A has %d channels", numChannels)

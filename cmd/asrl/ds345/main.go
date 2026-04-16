@@ -51,7 +51,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer dev.Close()
+	defer func() {
+		if err := dev.Close(); err != nil {
+			log.Printf("error closing device: %s", err)
+		}
+	}()
 
 	// Create a new IVI instance of and reset the SRS DS345 function
 	// generator using the serial port.
@@ -59,7 +63,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}
-	defer inst.Close()
+	defer func() {
+		if err := inst.Close(); err != nil {
+			log.Printf("error closing IVI driver: %s", err)
+		}
+	}()
 
 	// From here forward, we can use the IVI API for the function generator
 	// instead of having to send SCPI or other commands that are specific to this

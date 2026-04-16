@@ -149,7 +149,9 @@ func main() {
 	}
 
 	// Close the IVI driver to return the instrument to local control.
-	ps.Close()
+	if err := ps.Close(); err != nil {
+		log.Printf("error closing IVI driver: %s", err)
+	}
 
 	// Return local control to the front panel.
 	err = gpib.FrontPanel(true)

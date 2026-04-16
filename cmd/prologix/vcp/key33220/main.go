@@ -186,7 +186,9 @@ func main() {
 	log.Printf("Operation mode = %s", om)
 
 	// Close the IVI driver to return the instrument to local control.
-	fg.Close()
+	if err := fg.Close(); err != nil {
+		log.Printf("error closing IVI driver: %s", err)
+	}
 
 	// Discard any unread data on the serial port and then close.
 	err = vcp.Flush()

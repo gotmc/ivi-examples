@@ -42,7 +42,11 @@ func main() {
 	}
 
 	// Close the LXI device when done.
-	defer dev.Close()
+	defer func() {
+		if err := dev.Close(); err != nil {
+			log.Printf("error closing LXI device: %s", err)
+		}
+	}()
 
 	// Create a new IVI instance of and reset the Keysight InfiniiVision oscilloscope
 	// using the LXI device.
@@ -50,7 +54,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("IVI instrument eror: %s", err)
 	}
-	defer scope1.Close()
+	defer func() {
+		if err := scope1.Close(); err != nil {
+			log.Printf("error closing IVI driver: %s", err)
+		}
+	}()
 
 	// From here forward, we can use the IVI API for the oscilloscope instead of
 	// having to send SCPI or other commands that are specific to this model
