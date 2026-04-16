@@ -92,7 +92,10 @@ func main() {
 		log.Printf("error clearing device: %s", err)
 	}
 
-	// Query the identification of the function generator.
+	// Demonstrate issuing a raw SCPI query through the Prologix controller
+	// before handing off to the IVI driver. The other prologix examples skip
+	// this step and go straight to the IVI driver, which is why only this
+	// example threads a context.
 	idn, err := gpib.Query(ctx, "*idn?")
 	if err != nil && err != io.EOF {
 		log.Fatalf("error querying serial port: %s", err)
