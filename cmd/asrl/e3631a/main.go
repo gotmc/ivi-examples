@@ -23,6 +23,7 @@ import (
 var (
 	serialPort string
 	baudRate   int
+	timeout    time.Duration
 )
 
 func init() {
@@ -39,25 +40,40 @@ func init() {
 		9600,
 		"Serial port baud rate for Keysight E3631A",
 	)
+	flag.DurationVar(
+		&timeout,
+		"timeout",
+		5*time.Second,
+		"I/O timeout applied to each instrument operation",
+	)
+}
+
+// bounded returns a context bounded by the -timeout flag. Build a fresh one
+// per I/O call so the budget isn't consumed by earlier work or user pauses.
+func bounded() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), timeout)
 }
 
 func main() {
 	// Parse the flags
 	flag.Parse()
 
-	ctx := context.Background()
-
-	// Open the serial port.
+	// Open the serial port, bounded by -timeout so an unresponsive adapter
+	// fails fast instead of hanging.
 	address := fmt.Sprintf("ASRL::%s::%d::8N2::INSTR", serialPort, baudRate)
 	log.Printf("VISA Address = %s", address)
-	dev, err := asrl.NewDevice(ctx, address, asrl.WithHWHandshaking(true))
+	log.Printf("I/O timeout = %s", timeout)
+	openCtx, openCancel := bounded()
+	dev, err := asrl.NewDevice(openCtx, address, asrl.WithHWHandshaking(true))
+	openCancel()
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Create a new IVI instance of the HP/Agilent/Keysight E3631A DC power
 	// supply. Reset the E3631A in order to clear any previous errors.
-	ps, err := e36xx.New(dev, ivi.WithIDQuery(), ivi.WithReset())
+	// ivi.WithTimeout applies the same budget to every driver method call.
+	ps, err := e36xx.New(dev, ivi.WithIDQuery(), ivi.WithReset(), ivi.WithTimeout(timeout))
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}
@@ -72,7 +88,10 @@ func main() {
 	}
 
 	time.Sleep(500 * time.Millisecond)
-	if err = dev.Command(ctx, "syst:rem"); err != nil {
+	remCtx, remCancel := bounded()
+	err = dev.Command(remCtx, "syst:rem")
+	remCancel()
+	if err != nil {
 		log.Fatalf("error setting to remote: %v", err)
 	}
 	time.Sleep(500 * time.Millisecond)
@@ -161,7 +180,10 @@ func main() {
 	if err := ps.Close(); err != nil {
 		log.Printf("error closing IVI driver: %s", err)
 	}
-	if err = dev.Command(ctx, "system:local"); err != nil {
+	localCtx, localCancel := bounded()
+	err = dev.Command(localCtx, "system:local")
+	localCancel()
+	if err != nil {
 		log.Fatalf("error setting to local: %v", err)
 	}
 	if err := dev.Close(); err != nil {
