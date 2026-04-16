@@ -77,7 +77,7 @@ updateall:
 tidy:
   go mod tidy
  
-# Run the ASRL SRS DS345 function generator example.
+# ASRL SRS DS345 function generator.
 [group('examples')]
 ds345 port:
   #!/usr/bin/env bash
@@ -86,7 +86,7 @@ ds345 port:
   env go build -o ds345
   ./ds345 -port={{port}}
 
-# Run the LXI Keysight 33512B fcn gen example.
+# LXI Keysight 33512B function generator.
 [group('examples')]
 k33512lxi ip:
   #!/usr/bin/env bash
@@ -95,7 +95,7 @@ k33512lxi ip:
   env go build -o key33512
   ./key33512 -ip={{ip}}
 
-# Run the LXI Keysight 33220A fcn gen example.
+# LXI Keysight 33220A function generator.
 [group('examples')]
 k33220lxi ip:
   #!/usr/bin/env bash
@@ -104,16 +104,16 @@ k33220lxi ip:
   env go build -o key33220
   ./key33220 -ip={{ip}}
 
-# Run the USBTMC Keysight 33220A fcn gen example.
+# USBTMC Keysight 33220A function generator.
 [group('examples')]
-k33220usb sn='MY44027285':
+k33220usb sn:
   #!/usr/bin/env bash
   echo '# IVI USBTMC Keysight 33220A Example Application'
   cd {{justfile_directory()}}/cmd/usbtmc/key33220
   env go build -o key33220
   ./key33220 -sn={{sn}}
 
-# Run the VISA USBTMC Keysight 33220A fcn gen example.
+# VISA USBTMC Keysight 33220A function generator.
 [group('examples')]
 k33220visa:
   #!/usr/bin/env bash
@@ -122,7 +122,7 @@ k33220visa:
   env go build -o key33220
   ./key33220 -visa="USB0::2391::1031::MY44035849::INSTR"
 
-# Run the Prologix VCP GPIB Keysight 33220A fcn gen example.
+# Prologix VCP GPIB Keysight 33220A function generator.
 [group('examples')]
 k33220gpib port:
   #!/usr/bin/env bash
@@ -131,7 +131,7 @@ k33220gpib port:
   env go build -o key33220
   ./key33220 -port={{port}}
 
-# Run the LXI Keysight 34461A DMM example.
+# LXI Keysight 34461A DMM.
 [group('examples')]
 k34461lxi ip:
   #!/usr/bin/env bash
@@ -140,7 +140,7 @@ k34461lxi ip:
   env go build -o key34461a
   ./key34461a -ip={{ip}}
 
-# Run the Prologix VCP GPIB Keysight E3631A pwr supply example.
+# Prologix VCP GPIB Keysight E3631A power supply.
 [group('examples')]
 k3631gpib port:
   #!/usr/bin/env bash
@@ -149,7 +149,7 @@ k3631gpib port:
   env go build -o e3631a
   ./e3631a -port={{port}}
 
-# Run the ASRL Keysight E3631A pwr supply example.
+# ASRL Keysight E3631A power supply.
 [group('examples')]
 k3631asrl port:
   #!/usr/bin/env bash
@@ -158,7 +158,7 @@ k3631asrl port:
   env go build -o e3631a
   ./e3631a -port={{port}}
 
-# Run the LXI Keysight InfiniiVision MSO-X 3024A oscilloscope example.
+# LXI Keysight InfiniiVision MSO-X 3024A.
 [group('examples')]
 k3024lxi ip:
   #!/usr/bin/env bash
@@ -167,7 +167,7 @@ k3024lxi ip:
   env go build -o key3024
   ./key3024 -ip={{ip}}
 
-# Run the LXI Kikusui PMX DC power supply example.
+# LXI Kikusui PMX DC power supply.
 [group('examples')]
 pmxlxi ip:
   #!/usr/bin/env bash
@@ -176,7 +176,7 @@ pmxlxi ip:
   env go build -o pmx
   ./pmx -ip={{ip}}
 
-# Run the Prologix VCP GPIB Fluke 45 DMM example.
+# Prologix VCP GPIB Fluke 45 DMM.
 [group('examples')]
 f45gpib port:
   #!/usr/bin/env bash
@@ -185,7 +185,7 @@ f45gpib port:
   env go build -o fluke45
   ./fluke45 -port={{port}}
 
-# Run the USBTMC Keysight U2751A switch matrix example.
+# USBTMC Keysight U2751A switch matrix.
 [group('examples')]
 ku2751usb:
   #!/usr/bin/env bash
