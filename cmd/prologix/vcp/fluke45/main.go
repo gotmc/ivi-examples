@@ -6,6 +6,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 
 	"github.com/gotmc/ivi"
@@ -15,7 +16,15 @@ import (
 )
 
 func main() {
-	serialPort := "/dev/tty.usbserial-PX8X3YR6"
+	var serialPort string
+	flag.StringVar(
+		&serialPort,
+		"port",
+		"/dev/tty.usbserial-PX8X3YR6",
+		"Serial port for Prologix VCP GPIB controller",
+	)
+	flag.Parse()
+
 	vcp, err := vcp.NewVCP(serialPort)
 	if err != nil {
 		log.Fatal(err)

@@ -166,3 +166,30 @@ k3024lxi ip:
   cd {{justfile_directory()}}/cmd/lxi/key3024
   env go build -o key3024
   ./key3024 -ip={{ip}}
+
+# Run the LXI Kikusui PMX DC power supply example.
+[group('examples')]
+pmxlxi ip:
+  #!/usr/bin/env bash
+  echo '# IVI LXI Kikusui PMX Example Application'
+  cd {{justfile_directory()}}/cmd/lxi/pmx
+  env go build -o pmx
+  ./pmx -ip={{ip}}
+
+# Run the Prologix VCP GPIB Fluke 45 DMM example.
+[group('examples')]
+f45gpib port:
+  #!/usr/bin/env bash
+  echo '# IVI Prologix VCP GPIB Fluke 45 Example Application'
+  cd {{justfile_directory()}}/cmd/prologix/vcp/fluke45
+  env go build -o fluke45
+  ./fluke45 -port={{port}}
+
+# Run the USBTMC Keysight U2751A switch matrix example.
+[group('examples')]
+ku2751usb:
+  #!/usr/bin/env bash
+  echo '# IVI USBTMC Keysight U2751A Example Application'
+  cd {{justfile_directory()}}/cmd/usbtmc/keyu2751a
+  env go build -o keyu2751a
+  ./keyu2751a
