@@ -21,21 +21,33 @@ import (
 func main() {
 	log.Println("IVI LXI Keysight 33461A Example Application")
 
-	// Get IP address from CLI flag.
+	// Get IP address and I/O timeout from CLI flags.
 	var ip string
+	var timeout time.Duration
 	flag.StringVar(
 		&ip,
 		"ip",
 		"10.12.100.56",
 		"IP address of Keysight 3461A",
 	)
+	flag.DurationVar(
+		&timeout,
+		"timeout",
+		5*time.Second,
+		"I/O timeout applied to each instrument operation",
+	)
 	flag.Parse()
 
-	ctx := context.Background()
+	// Bound the initial TCP dial with the same timeout so an unreachable
+	// instrument fails fast instead of hanging on the default OS connect
+	// timeout.
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel()
 
 	// Create a new LXI device
 	address := fmt.Sprintf("TCPIP0::%s::5025::SOCKET", ip)
 	log.Printf("VISA address = %s", address)
+	log.Printf("I/O timeout = %s", timeout)
 	dev, err := lxi.NewDevice(ctx, address)
 	if err != nil {
 		log.Fatalf("NewDevice error: %s", err)
@@ -49,8 +61,9 @@ func main() {
 	}()
 
 	// Create a new IVI instance of and reset the Agilent 33220 function
-	// generator using the LXI device.
-	d, err := key3446x.New(dev, ivi.WithIDQuery(), ivi.WithReset())
+	// generator using the LXI device. ivi.WithTimeout applies the same
+	// timeout to each subsequent driver method call.
+	d, err := key3446x.New(dev, ivi.WithIDQuery(), ivi.WithReset(), ivi.WithTimeout(timeout))
 	if err != nil {
 		log.Fatalf("IVI instrument eror: %s", err)
 	}
