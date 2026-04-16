@@ -1,6 +1,6 @@
 # ivi-examples
 
-Examples using the [gotmc ivi package][ivi], which proides a Go-based
+Examples using the [gotmc ivi package][ivi], which provides a Go-based
 implementation of the Interchangeable Virtual Instrument (IVI) standard.
 
 [![GoDoc][godoc badge]][godoc link]
@@ -20,13 +20,18 @@ commands for each individual piece of test equipment. For instance, by using the
 function generators can be programmed using one standard API. The only
 requirement for this is having an IVI driver for the desired test equipment.
 
+## Examples
+
+Run `just` with no arguments to list the available example recipes along with
+the flags each one expects.
+
 ## Documentation
 
 Documentation can be found at either:
 
 - <https://godoc.org/github.com/gotmc/ivi-examples>
-- <http://localhost:6060/pkg/github.com/gotmc/ivi-examples/> after running `$
-godoc -http=:6060`
+- Locally in the browser by running `just docs`, which serves the package
+  documentation via [pkgsite][].
 
 ## Contributing
 
@@ -42,14 +47,14 @@ Contributions are welcome! To contribute please:
 Prior to submitting a [pull request][], please run:
 
 ```bash
-$ make check
-$ make lint
+$ just check
+$ just lint
 ```
 
 To update and view the test coverage report:
 
 ```bash
-$ make cover
+$ just cover
 ```
 
 ## License
@@ -67,6 +72,7 @@ $ make cover
 [license badge]: https://img.shields.io/badge/license-MIT-blue.svg
 [lxi]: https://github.com/gotmc/lxi
 [prologix]: https://github.com/gotmc/prologix
+[pkgsite]: https://pkg.go.dev/golang.org/x/pkgsite/cmd/pkgsite
 [pull request]: https://help.github.com/articles/using-pull-requests
 [report badge]: https://goreportcard.com/badge/github.com/gotmc/ivi-examples
 [report card]: https://goreportcard.com/report/github.com/gotmc/ivi-examples
