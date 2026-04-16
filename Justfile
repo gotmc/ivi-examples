@@ -106,12 +106,12 @@ k33220lxi ip:
 
 # Run the USBTMC Keysight 33220A fcn gen example.
 [group('examples')]
-k33220usb:
+k33220usb sn='MY44027285':
   #!/usr/bin/env bash
   echo '# IVI USBTMC Keysight 33220A Example Application'
   cd {{justfile_directory()}}/cmd/usbtmc/key33220
   env go build -o key33220
-  ./key33220 -visa="USB0::2391::1031::MY44035849::INSTR"
+  ./key33220 -sn={{sn}}
 
 # Run the VISA USBTMC Keysight 33220A fcn gen example.
 [group('examples')]

@@ -7,6 +7,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 
 	"github.com/gotmc/ivi"
@@ -16,30 +17,33 @@ import (
 	_ "github.com/gotmc/usbtmc/driver/google"
 )
 
-var (
-	debugLevel uint
-	address    string
+const (
+	defaultLevel = 1
+	debugUsage   = "USB debug level"
 )
 
-func init() {
-	// Get the debug level from CLI flag.
-	const (
-		defaultLevel = 1
-		debugUsage   = "USB debug level"
+func main() {
+	var (
+		debugLevel   uint
+		serialNumber string
 	)
+
+	// Get the debug level from CLI flag.
 	flag.UintVar(&debugLevel, "debug", defaultLevel, debugUsage)
 	flag.UintVar(&debugLevel, "d", defaultLevel, debugUsage+" (shorthand)")
 
-	// Get VISA address from CLI flag.
+	// Get the serial number for the Keyight 33220A from CLI flag.
 	flag.StringVar(
-		&address,
-		"visa",
-		"USB0::2391::1031::MY44035849::INSTR",
-		"VISA address of Keysight 33220A",
+		&serialNumber,
+		"sn",
+		"MY44035349",
+		"Serial number of Keysight 33220A",
 	)
-}
+	flag.Parse()
 
-func main() {
+	// Create new VISA resource
+	address := fmt.Sprintf("USB0::2391::1031::%s::INSTR", serialNumber)
+
 	log.Println("IVI USBTMC Keysight 33220A Example Application")
 
 	// Parse the flags
