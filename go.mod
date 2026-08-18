@@ -3,11 +3,11 @@ module github.com/gotmc/ivi-examples
 go 1.26
 
 // Uncomment when developing against an unreleased local copy of gotmc/ivi.
-replace github.com/gotmc/ivi => ../ivi
+// replace github.com/gotmc/ivi => ../ivi
 
 require (
 	github.com/gotmc/asrl v0.14.0
-	github.com/gotmc/ivi v0.28.0
+	github.com/gotmc/ivi v0.30.0
 	github.com/gotmc/lxi v0.17.0
 	github.com/gotmc/prologix v0.11.0
 	github.com/gotmc/usbtmc v0.15.1
