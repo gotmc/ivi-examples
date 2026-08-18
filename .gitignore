@@ -2,6 +2,7 @@
 # its own directory using the directory name as the binary name.
 cmd/asrl/ds345/ds345
 cmd/asrl/e3631a/e3631a
+cmd/lxi/e36102b/e36102b
 cmd/lxi/kt3024/kt3024
 cmd/lxi/kt33220/kt33220
 cmd/lxi/kt33512/kt33512
