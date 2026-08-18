@@ -3,14 +3,11 @@ module github.com/gotmc/ivi-examples
 go 1.26
 
 // Uncomment when developing against an unreleased local copy of gotmc/ivi.
-// The E36102B example needs the e36000 single-output command set, which is
-// not in a tagged release yet. Re-comment this and bump the require line once
-// ivi is tagged.
-replace github.com/gotmc/ivi => ../ivi
+// replace github.com/gotmc/ivi => ../ivi
 
 require (
 	github.com/gotmc/asrl v0.14.0
-	github.com/gotmc/ivi v0.30.0
+	github.com/gotmc/ivi v0.31.0
 	github.com/gotmc/lxi v0.17.0
 	github.com/gotmc/prologix v0.11.0
 	github.com/gotmc/usbtmc v0.15.1
