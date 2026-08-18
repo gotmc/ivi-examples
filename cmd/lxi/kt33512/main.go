@@ -13,7 +13,7 @@ import (
 
 	"github.com/gotmc/ivi"
 	"github.com/gotmc/ivi/fgen"
-	"github.com/gotmc/ivi/fgen/keysight/key33000"
+	"github.com/gotmc/ivi/fgen/keysight/kt33000"
 	"github.com/gotmc/lxi"
 )
 
@@ -49,7 +49,7 @@ func main() {
 
 	// Create a new IVI instance and reset the Keysight 33512B function generator
 	// using the LXI device.
-	fg, err := key33000.New(dev, ivi.WithIDQuery(), ivi.WithReset())
+	fg, err := kt33000.New(dev, ivi.WithReset())
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}

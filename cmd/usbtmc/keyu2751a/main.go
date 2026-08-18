@@ -44,7 +44,7 @@ func main() {
 	}()
 
 	// Create a new IVI instance of the Keysight U2751A switch matrix.
-	sw, err := u2751a.New(dev, ivi.WithIDQuery(), ivi.WithReset())
+	sw, err := u2751a.New(dev, ivi.WithReset())
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}

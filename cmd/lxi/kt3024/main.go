@@ -50,7 +50,7 @@ func main() {
 
 	// Create a new IVI instance of and reset the Keysight InfiniiVision oscilloscope
 	// using the LXI device.
-	scope1, err := infiniivision.New(dev, ivi.WithIDQuery(), ivi.WithReset())
+	scope1, err := infiniivision.New(dev, ivi.WithReset())
 	if err != nil {
 		log.Fatalf("IVI instrument eror: %s", err)
 	}

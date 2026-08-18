@@ -14,7 +14,7 @@ import (
 
 	"github.com/gotmc/ivi"
 	"github.com/gotmc/ivi/dmm"
-	"github.com/gotmc/ivi/dmm/keysight/key3446x"
+	"github.com/gotmc/ivi/dmm/keysight/kt34400"
 	"github.com/gotmc/lxi"
 )
 
@@ -63,7 +63,7 @@ func main() {
 	// Create a new IVI instance of and reset the Keysight 34461A DMM using
 	// the LXI device. ivi.WithTimeout applies the same timeout to each
 	// subsequent driver method call.
-	d, err := key3446x.New(dev, ivi.WithIDQuery(), ivi.WithReset(), ivi.WithTimeout(timeout))
+	d, err := kt34400.New(dev, ivi.WithReset(), ivi.WithTimeout(timeout))
 	if err != nil {
 		log.Fatalf("IVI instrument eror: %s", err)
 	}

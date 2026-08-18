@@ -17,7 +17,7 @@ import (
 
 	"github.com/gotmc/asrl"
 	"github.com/gotmc/ivi"
-	"github.com/gotmc/ivi/dcpwr/keysight/e36xx"
+	"github.com/gotmc/ivi/dcpwr/keysight/e36000"
 )
 
 var (
@@ -73,11 +73,11 @@ func main() {
 	// Create a new IVI instance of the HP/Agilent/Keysight E3631A DC power
 	// supply. Reset the E3631A in order to clear any previous errors.
 	// ivi.WithTimeout applies the same budget to every driver method call.
-	ps, err := e36xx.New(dev, ivi.WithIDQuery(), ivi.WithReset(), ivi.WithTimeout(timeout))
+	ps, err := e36000.New(dev, ivi.WithReset(), ivi.WithTimeout(timeout))
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}
-	log.Print("Created new IVI e36xx instrument")
+	log.Print("Created new IVI e36000 instrument")
 
 	// Clear and reset the device.
 	if err = ps.Clear(); err != nil {

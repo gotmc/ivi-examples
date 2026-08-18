@@ -91,54 +91,54 @@ ds345 port:
 k33512lxi ip:
   #!/usr/bin/env bash
   echo '# IVI LXI Keysight 33512B Example Application'
-  cd {{justfile_directory()}}/cmd/lxi/key33512
-  env go build -o key33512
-  ./key33512 -ip={{ip}}
+  cd {{justfile_directory()}}/cmd/lxi/kt33512
+  env go build -o kt33512
+  ./kt33512 -ip={{ip}}
 
 # LXI Keysight 33220A function generator.
 [group('examples')]
 k33220lxi ip:
   #!/usr/bin/env bash
   echo '# IVI LXI Keysight 33220A Example Application'
-  cd {{justfile_directory()}}/cmd/lxi/key33220
-  env go build -o key33220
-  ./key33220 -ip={{ip}}
+  cd {{justfile_directory()}}/cmd/lxi/kt33220
+  env go build -o kt33220
+  ./kt33220 -ip={{ip}}
 
 # USBTMC Keysight 33220A function generator.
 [group('examples')]
 k33220usb sn:
   #!/usr/bin/env bash
   echo '# IVI USBTMC Keysight 33220A Example Application'
-  cd {{justfile_directory()}}/cmd/usbtmc/key33220
-  env go build -o key33220
-  ./key33220 -sn={{sn}}
+  cd {{justfile_directory()}}/cmd/usbtmc/kt33220
+  env go build -o kt33220
+  ./kt33220 -sn={{sn}}
 
 # VISA USBTMC Keysight 33220A function generator.
 [group('examples')]
 k33220visa:
   #!/usr/bin/env bash
   echo '# IVI VISA USBTMC Keysight 33220A Example Application'
-  cd {{justfile_directory()}}/cmd/visa/usbtmc/key33220
-  env go build -o key33220
-  ./key33220 -visa="USB0::2391::1031::MY44035849::INSTR"
+  cd {{justfile_directory()}}/cmd/visa/usbtmc/kt33220
+  env go build -o kt33220
+  ./kt33220 -visa="USB0::2391::1031::MY44035849::INSTR"
 
 # Prologix VCP GPIB Keysight 33220A function generator.
 [group('examples')]
 k33220gpib port:
   #!/usr/bin/env bash
   echo '# IVI Prologix VCP GPIB Keysight 33220A Example Application'
-  cd {{justfile_directory()}}/cmd/prologix/vcp/key33220
-  env go build -o key33220
-  ./key33220 -port={{port}}
+  cd {{justfile_directory()}}/cmd/prologix/vcp/kt33220
+  env go build -o kt33220
+  ./kt33220 -port={{port}}
 
 # LXI Keysight 34461A DMM.
 [group('examples')]
 k34461lxi ip:
   #!/usr/bin/env bash
   echo '# IVI LXI Keysight 34461A Example Application'
-  cd {{justfile_directory()}}/cmd/lxi/key34461a
-  env go build -o key34461a
-  ./key34461a -ip={{ip}}
+  cd {{justfile_directory()}}/cmd/lxi/kt34461a
+  env go build -o kt34461a
+  ./kt34461a -ip={{ip}}
 
 # Prologix VCP GPIB Keysight E3631A power supply.
 [group('examples')]
@@ -163,9 +163,9 @@ k3631asrl port:
 k3024lxi ip:
   #!/usr/bin/env bash
   echo '# IVI LXI Keysight InfiniiVision MSO-X 3024A Example Application'
-  cd {{justfile_directory()}}/cmd/lxi/key3024
-  env go build -o key3024
-  ./key3024 -ip={{ip}}
+  cd {{justfile_directory()}}/cmd/lxi/kt3024
+  env go build -o kt3024
+  ./kt3024 -ip={{ip}}
 
 # LXI Kikusui PMX DC power supply.
 [group('examples')]

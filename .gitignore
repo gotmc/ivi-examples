@@ -1,18 +1,18 @@
-# Binaries for programs and plugins
-/key33220
+# Binaries for programs and plugins. The Justfile builds each example into
+# its own directory using the directory name as the binary name.
 cmd/asrl/ds345/ds345
 cmd/asrl/e3631a/e3631a
-cmd/lxi/key3024/key3024
-cmd/lxi/key33220/key33220
-cmd/lxi/key34461a/key34461a
-cmd/lxi/key33512/key33512
+cmd/lxi/kt3024/kt3024
+cmd/lxi/kt33220/kt33220
+cmd/lxi/kt33512/kt33512
+cmd/lxi/kt34461a/kt34461a
 cmd/lxi/pmx/pmx
 cmd/prologix/vcp/e3631a/e3631a
 cmd/prologix/vcp/fluke45/fluke45
-cmd/prologix/vcp/key33220/key33220
-cmd/usbtmc/key33220/key33220
+cmd/prologix/vcp/kt33220/kt33220
 cmd/usbtmc/keyu2751a/keyu2751a
-cmd/visa/usbtmc/key33220/key33220
+cmd/usbtmc/kt33220/kt33220
+cmd/visa/usbtmc/kt33220/kt33220
 *.exe
 *.exe~
 *.dll
@@ -27,4 +27,3 @@ cmd/visa/usbtmc/key33220/key33220
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
-key33512

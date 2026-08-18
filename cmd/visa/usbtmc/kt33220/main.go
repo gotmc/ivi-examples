@@ -6,114 +6,90 @@
 package main
 
 import (
+	"context"
 	"flag"
-	"fmt"
 	"log"
 
 	"github.com/gotmc/ivi"
 	"github.com/gotmc/ivi/fgen"
-	"github.com/gotmc/ivi/fgen/keysight/key33220"
-	"github.com/gotmc/usbtmc"
+	"github.com/gotmc/ivi/fgen/keysight/kt33000"
 	_ "github.com/gotmc/usbtmc/driver/google"
+	"github.com/gotmc/visa"
+	_ "github.com/gotmc/visa/driver/usbtmc"
 )
 
-const (
-	defaultLevel = 1
-	debugUsage   = "USB debug level"
+var (
+	debugLevel uint
+	address    string
 )
 
-func main() {
-	var (
-		debugLevel   uint
-		serialNumber string
-	)
-
+func init() {
 	// Get the debug level from CLI flag.
+	const (
+		defaultLevel = 1
+		debugUsage   = "USB debug level"
+	)
 	flag.UintVar(&debugLevel, "debug", defaultLevel, debugUsage)
 	flag.UintVar(&debugLevel, "d", defaultLevel, debugUsage+" (shorthand)")
 
-	// Get the serial number for the Keyight 33220A from CLI flag.
+	// Get VISA address from CLI flag.
 	flag.StringVar(
-		&serialNumber,
-		"sn",
-		"MY44035349",
-		"Serial number of Keysight 33220A",
+		&address,
+		"visa",
+		"USB0::2391::1031::MY44035849::INSTR",
+		"VISA address of Keysight 33220A",
 	)
-	flag.Parse()
+}
 
-	// Create new VISA resource
-	address := fmt.Sprintf("USB0::2391::1031::%s::INSTR", serialNumber)
-
+func main() {
 	log.Println("IVI USBTMC Keysight 33220A Example Application")
 
 	// Parse the flags
 	flag.Parse()
 
-	// Create a USBTMC context and set the debug level
-	usbCtx, err := usbtmc.NewContext()
-	if err != nil {
-		log.Fatalf("Error creating new USB context: %s", err)
-	}
-	usbCtx.SetDebugLevel(int(debugLevel))
+	ctx := context.Background()
 
-	// Close the USBMTC context when finished.
-	defer func() {
-		if err := usbCtx.Close(); err != nil {
-			log.Printf("error closing USBTMC context: %s", err)
-		}
-	}()
-
-	// Create a new USBTMC device and then close when finished.
+	// Configure a new VISA resource using the USBTMC driver.
 	log.Printf("VISA address = %s", address)
-	dev, err := usbCtx.NewDevice(address)
+	res, err := visa.NewResource(ctx, address)
 	if err != nil {
-		log.Fatalf("NewDevice error: %s", err)
+		log.Fatalf("VISA resource %s: %s", address, err)
 	}
-	defer func() {
-		if err := dev.Close(); err != nil {
-			log.Printf("error closing USBTMC device: %s", err)
-		}
-	}()
 
 	// Create a new IVI instance of and reset the Agilent 33220 function
 	// generator using the USBTMC device.
-	fg, err := key33220.New(dev, ivi.WithIDQuery(), ivi.WithReset())
+	inst, err := kt33000.New(res, ivi.WithReset())
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}
-	defer func() {
-		if err := fg.Close(); err != nil {
-			log.Printf("error closing IVI driver: %s", err)
-		}
-	}()
 
 	// From here forward, we can use the IVI API for the function generator
 	// instead of having to send SCPI or other commands that are specific to this
 	// model function generator.
 
 	// Query the instrument manufacturer.
-	mfr, err := fg.InstrumentManufacturer()
+	mfr, err := inst.InstrumentManufacturer()
 	if err != nil {
 		log.Printf("error querying instrument manufacturer: %s", err)
 	}
 	log.Printf("Instrument manufacturer = %s", mfr)
 
 	// Query the instrument model.
-	model, err := fg.InstrumentModel()
+	model, err := inst.InstrumentModel()
 	if err != nil {
 		log.Printf("error querying instrument model: %s", err)
 	}
 	log.Printf("Instrument model = %s", model)
 
 	// Query the instrument's serial number.
-	sn, err := fg.InstrumentSerialNumber()
+	sn, err := inst.InstrumentSerialNumber()
 	if err != nil {
 		log.Printf("error querying instrument sn: %s", err)
 	}
 	log.Printf("Instrument S/N = %s", sn)
 
 	// Query the firmware revision.
-	fw, err := fg.FirmwareRevision()
+	fw, err := inst.FirmwareRevision()
 	if err != nil {
 		log.Printf("error querying firmware revision: %s", err)
 	}
@@ -121,7 +97,7 @@ func main() {
 
 	// Channel specific methods can be accessed using the Channel method with a
 	// 0-based index to select the desired channel.
-	ch, err := fg.Channel(0)
+	ch, err := inst.Channel(0)
 	if err != nil {
 		log.Fatalf("error getting channel 0: %s", err)
 	}
@@ -143,33 +119,28 @@ func main() {
 
 	// Instead of configuring attributes of a standard waveform individually, the
 	// standard waveform can be configured using a single method.
-	if err = ch.ConfigureStandardWaveform(fgen.Sine, 0.5, 0.0, 100.0, 0); err != nil {
+	if err = ch.ConfigureStandardWaveform(fgen.Sine, 0.5, 0.0, 100, 0); err != nil {
 		log.Fatalf("error configuring standard waveform: %s", err)
 	}
-	if err = ch.EnableOutput(); err != nil {
-		log.Fatalf("error enabling output: %s", err)
-	}
 
-	// Configure a burst waveform using the above 100 Hz sine wave with 400 ms
-	// on-time and 200 ms off-time for a total period of 600 ms.
-	if err = ch.SetOperationMode(fgen.BurstMode); err != nil {
-		log.Fatalf("error setting burst mode: %s", err)
-	}
-
-	if err = ch.SetBurstCount(4); err != nil {
+	// Setup a bursted sinusoidal waveform.
+	if err = ch.SetBurstCount(10); err != nil {
 		log.Fatalf("error setting burst count: %s", err)
 	}
-
+	// Set the code period to 60 ms.
+	if err = ch.SetInternalTriggerRate(1 / 0.6); err != nil {
+		log.Fatalf("error setting the internal trigger rate: %s", err)
+	}
 	if err = ch.SetStartTriggerSource(fgen.TriggerSourceInternal); err != nil {
-		log.Fatalf("error setting internal trigger source: %s", err)
+		log.Fatalf("error setting the trigger source: %s", err)
+	}
+	if err = ch.SetOperationMode(fgen.BurstMode); err != nil {
+		log.Fatalf("error setting the operation mode to burst: %s", err)
 	}
 
-	if err = ch.SetInternalTriggerRate(1 / 0.06); err != nil {
-		log.Fatalf("error setting internal trigger rate: %s", err)
-	}
-
+	// Enable the output.
 	if err = ch.EnableOutput(); err != nil {
-		log.Fatalf("error enabling output: %s", err)
+		log.Fatalf("error enabling the output: %s", err)
 	}
 
 	// Query the frequency.
@@ -186,7 +157,7 @@ func main() {
 	}
 	log.Printf("Amplitude = %.3f Vpp", amp)
 
-	// Query the DC offset.
+	// Query the DC offset voltage.
 	offset, err := ch.DCOffset()
 	if err != nil {
 		log.Printf("error querying DC offset: %s", err)
@@ -227,4 +198,13 @@ func main() {
 		log.Printf("error querying operation mode: %s", err)
 	}
 	log.Printf("Operation mode = %s", om)
+
+	// Close the IVI driver and VISA resource.
+	if err := inst.Close(); err != nil {
+		log.Printf("error closing IVI driver: %s", err)
+	}
+	err = res.Close()
+	if err != nil {
+		log.Printf("Error closing VISA resource: %s", err)
+	}
 }

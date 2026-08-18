@@ -45,7 +45,7 @@ func main() {
 	}()
 
 	// Create a new IVI instance of the KIKUSUI PMW power supply and reset.
-	dcp, err := pmx.New(dev, ivi.WithIDQuery(), ivi.WithReset())
+	dcp, err := pmx.New(dev, ivi.WithReset())
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}

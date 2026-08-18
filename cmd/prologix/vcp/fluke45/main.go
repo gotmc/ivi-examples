@@ -43,7 +43,7 @@ func main() {
 	log.Printf("Using %s", prologixVer)
 
 	// Create a new IVI instance of the Fluke multimeter
-	dmm, err := fluke45.New(gpib, ivi.WithIDQuery(), ivi.WithReset())
+	dmm, err := fluke45.New(gpib, ivi.WithReset())
 	if err != nil {
 		log.Fatalf("IVI instrument error: %s", err)
 	}

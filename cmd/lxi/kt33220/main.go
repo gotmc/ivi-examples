@@ -6,63 +6,62 @@
 package main
 
 import (
+	"context"
 	"flag"
+	"fmt"
 	"log"
 
 	"github.com/gotmc/ivi"
 	"github.com/gotmc/ivi/fgen"
-	"github.com/gotmc/ivi/fgen/keysight/key33220"
-	"github.com/gotmc/prologix"
-	"github.com/gotmc/prologix/driver/vcp"
+	"github.com/gotmc/ivi/fgen/keysight/kt33000"
+	"github.com/gotmc/lxi"
 )
-
-var (
-	serialPort string
-)
-
-func init() {
-	// Get Virtual COM Port (VCP) serial port for Prologix.
-	flag.StringVar(
-		&serialPort,
-		"port",
-		"/dev/tty.usbserial-PX8X3YR6",
-		"Serial port for Prologix VCP GPIB controller",
-	)
-}
 
 func main() {
-	log.Println("IVI Prologix VCP GPIB Keysight 33220A Example Application")
-	// Parse the flags
+	log.Println("IVI LXI Keysight 33220A Example Application")
+
+	// Get IP address from CLI flag.
+	var ip string
+	flag.StringVar(
+		&ip,
+		"ip",
+		"192.168.1.100",
+		"IP address of Keysight 33220A",
+	)
 	flag.Parse()
 
-	log.Printf("Serial port = %s", serialPort)
-	vcp, err := vcp.NewVCP(serialPort)
+	ctx := context.Background()
+
+	// Create a new LXI device
+	address := fmt.Sprintf("TCPIP0::%s::5025::SOCKET", ip)
+	log.Printf("VISA address = %s", address)
+	dev, err := lxi.NewDevice(ctx, address)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("NewDevice error: %s", err)
 	}
 
-	// Create a new GPIB controller using the aforementioned serial port and
-	// communicating with the instrument at GPIB address 4.
-	gpib, err := prologix.NewController(vcp, 6, true)
-	if err != nil {
-		log.Fatalf("NewController error: %s", err)
-	}
-	prologixVer, err := gpib.Version()
-	if err != nil {
-		log.Fatalf("Unable to determine Prologix controller version: %s", err)
-	}
-	log.Printf("Using %s", prologixVer)
+	// Close the LXI device when done.
+	defer func() {
+		if err := dev.Close(); err != nil {
+			log.Printf("error closing LXI device: %s", err)
+		}
+	}()
 
-	// Create a new IVI instance of and reset the Agilent 33220 function
-	// generator using the Prologix VCP GPIB device.
-	fg, err := key33220.New(gpib, ivi.WithIDQuery(), ivi.WithReset())
+	// Create a new IVI instance and reset the Agilent 33220 function generator
+	// using the LXI device.
+	fg, err := kt33000.New(dev, ivi.WithReset())
 	if err != nil {
-		log.Fatalf("IVI instrument error: %s", err)
+		log.Fatalf("IVI instrument eror: %s", err)
 	}
+	defer func() {
+		if err := fg.Close(); err != nil {
+			log.Printf("error closing IVI driver: %s", err)
+		}
+	}()
 
 	// From here forward, we can use the IVI API for the function generator
-	// instead of having to send SCPI or other commands that are specific to this
-	// model function generator.
+	// instead of having to send SCPI or other commands that are specific to
+	// this model function generator.
 
 	// Query the instrument manufacturer.
 	mfr, err := fg.InstrumentManufacturer()
@@ -101,24 +100,45 @@ func main() {
 	if err = ch.DisableOutput(); err != nil {
 		log.Fatalf("error disabling output on ch0: %s", err)
 	}
-	if err = ch.SetAmplitude(0.5); err != nil {
+	if err = ch.SetAmplitude(2.1); err != nil {
 		log.Fatalf("error setting the amplitude on ch0: %s", err)
 	}
 	if err = ch.SetStandardWaveform(fgen.Sine); err != nil {
 		log.Fatalf("error setting the standard waveform: %s", err)
 	}
-	if err = ch.SetDCOffset(0.2); err != nil {
+	if err = ch.SetDCOffset(0.1); err != nil {
 		log.Fatalf("error setting DC offest: %s", err)
 	}
-	if err = ch.SetFrequency(2350); err != nil {
+	if err = ch.SetFrequency(2100); err != nil {
 		log.Fatalf("error setting frequency: %s", err)
 	}
 
 	// Instead of configuring attributes of a standard waveform individually, the
-	// standard waveform can be configured using a single method.
-	if err = ch.ConfigureStandardWaveform(fgen.Sine, 0.5, 0.0, 100, 0); err != nil {
+	// standard waveform can be configured using a single method. In this case, a
+	// Sine wave with 0.5 Vpp amplitude, 0.0 Vdc offset, 100.0 Hz, and 0.0 phase
+	// shift is created.
+	if err = ch.ConfigureStandardWaveform(fgen.Sine, 0.5, 0.0, 100.0, 0.0); err != nil {
 		log.Fatalf("error configuring standard waveform: %s", err)
 	}
+
+	// Configure a burst waveform using the above 100 Hz sine wave with 400 ms
+	// on-time and 200 ms off-time for a total period of 600 ms.
+	if err = ch.SetOperationMode(fgen.BurstMode); err != nil {
+		log.Fatalf("error setting burst mode: %s", err)
+	}
+
+	if err = ch.SetBurstCount(4); err != nil {
+		log.Fatalf("error setting burst count: %s", err)
+	}
+
+	if err = ch.SetStartTriggerSource(fgen.TriggerSourceInternal); err != nil {
+		log.Fatalf("error setting internal trigger source: %s", err)
+	}
+
+	if err = ch.SetInternalTriggerRate(1 / 0.06); err != nil {
+		log.Fatalf("error setting internal trigger rate: %s", err)
+	}
+
 	if err = ch.EnableOutput(); err != nil {
 		log.Fatalf("error enabling output: %s", err)
 	}
@@ -151,12 +171,6 @@ func main() {
 	}
 	log.Printf("Standard waveform = %s", wave)
 
-	// Return local control to the front panel.
-	err = gpib.FrontPanel(true)
-	if err != nil {
-		log.Fatalf("error setting local control for front panel: %s", err)
-	}
-
 	// Query the burst count.
 	bc, err := ch.BurstCount()
 	if err != nil {
@@ -164,19 +178,19 @@ func main() {
 	}
 	log.Printf("Burst count = %d", bc)
 
-	// Query the internal trigger rate.
+	// Query the internal trigger period.
 	itr, err := ch.InternalTriggerRate()
 	if err != nil {
 		log.Printf("error querying internal trigger rate: %s", err)
 	}
 	log.Printf("Internal trigger rate = %.1f Hz", itr)
 
-	// Query the trigger source.
+	// Query the start trigger source.
 	ts, err := ch.StartTriggerSource()
 	if err != nil {
 		log.Printf("error querying start trigger source: %s", err)
 	}
-	log.Printf("Start trigger source = %s", ts)
+	log.Printf("Start trigger source = %v", ts)
 
 	// Query the operation mode.
 	om, err := ch.OperationMode()
@@ -184,19 +198,4 @@ func main() {
 		log.Printf("error querying operation mode: %s", err)
 	}
 	log.Printf("Operation mode = %s", om)
-
-	// Close the IVI driver to return the instrument to local control.
-	if err := fg.Close(); err != nil {
-		log.Printf("error closing IVI driver: %s", err)
-	}
-
-	// Discard any unread data on the serial port and then close.
-	err = vcp.Flush()
-	if err != nil {
-		log.Printf("error flushing serial port: %s", err)
-	}
-	err = vcp.Close()
-	if err != nil {
-		log.Printf("error closing serial port: %s", err)
-	}
 }
