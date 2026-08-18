@@ -10,8 +10,8 @@ cmd/lxi/pmx/pmx
 cmd/prologix/vcp/e3631a/e3631a
 cmd/prologix/vcp/fluke45/fluke45
 cmd/prologix/vcp/kt33220/kt33220
-cmd/usbtmc/keyu2751a/keyu2751a
 cmd/usbtmc/kt33220/kt33220
+cmd/usbtmc/u2751a/u2751a
 cmd/visa/usbtmc/kt33220/kt33220
 *.exe
 *.exe~

@@ -190,6 +190,6 @@ f45gpib port:
 ku2751usb:
   #!/usr/bin/env bash
   echo '# IVI USBTMC Keysight U2751A Example Application'
-  cd {{justfile_directory()}}/cmd/usbtmc/keyu2751a
-  env go build -o keyu2751a
-  ./keyu2751a
+  cd {{justfile_directory()}}/cmd/usbtmc/u2751a
+  env go build -o u2751a
+  ./u2751a
