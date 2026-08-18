@@ -149,6 +149,15 @@ k3631gpib port:
   env go build -o e3631a
   ./e3631a -port={{port}}
 
+# LXI Keysight E36102B DC power supply.
+[group('examples')]
+k36102lxi ip:
+  #!/usr/bin/env bash
+  echo '# IVI LXI Keysight E36102B Example Application'
+  cd {{justfile_directory()}}/cmd/lxi/e36102b
+  env go build -o e36102b
+  ./e36102b -ip={{ip}}
+
 # ASRL Keysight E3631A power supply.
 [group('examples')]
 k3631asrl port:

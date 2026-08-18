@@ -27,6 +27,7 @@ just k33220lxi 192.168.1.100    # LXI Keysight 33220A function generator
 just k33512lxi 192.168.1.100    # LXI Keysight 33512B function generator
 just k34461lxi 10.12.100.56     # LXI Keysight 34461A DMM
 just k3024lxi 192.168.1.100     # LXI Keysight MSO-X 3024A oscilloscope
+just k36102lxi 192.168.1.100    # LXI Keysight E36102B DC power supply
 just pmxlxi 192.168.1.100       # LXI Kikusui PMX DC power supply
 just k33220usb MY44035849       # USBTMC Keysight 33220A (by serial number)
 just ku2751usb                  # USBTMC Keysight U2751A switch matrix
@@ -95,7 +96,8 @@ The `cmd/asrl/e3631a` and `cmd/lxi/kt34461a` examples demonstrate the
 
 - `fgen` (Function Generator): `kt33000` (Keysight 33220A and 33512B), `ds345` (SRS DS345)
 - `dmm` (Digital Multimeter): `kt34400` (Keysight 34461A), `fluke45` (Fluke 45)
-- `dcpwr` (DC Power Supply): `e36000` (Keysight E3631A), `pmx` (Kikusui PMX)
+- `dcpwr` (DC Power Supply): `e36000` (Keysight E3631A and E36102B), `pmx`
+  (Kikusui PMX)
 - `scope` (Oscilloscope): `infiniivision` (Keysight MSO-X 3024A)
 - `swtch` (Switch): `u2751a` (Keysight U2751A)
 

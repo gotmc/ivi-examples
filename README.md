@@ -32,6 +32,7 @@ instrument combinations included in this repository:
 | LXI           | Keysight 33512B       | Function generator | `just k33512lxi <ip>`    |
 | LXI           | Keysight 34461A       | Digital multimeter | `just k34461lxi <ip>`    |
 | LXI           | Keysight MSO-X 3024A  | Oscilloscope       | `just k3024lxi <ip>`     |
+| LXI           | Keysight E36102B      | DC power supply    | `just k36102lxi <ip>`    |
 | LXI           | Kikusui PMX           | DC power supply    | `just pmxlxi <ip>`       |
 | USBTMC        | Keysight 33220A       | Function generator | `just k33220usb`         |
 | USBTMC        | Keysight U2751A       | Switch matrix      | `just ku2751usb`         |
